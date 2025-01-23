@@ -1,11 +1,11 @@
 // Package imports:
 
 // Package imports:
-import 'package:flutter_callkit_incoming_yoer/entities/android_params.dart';
-import 'package:flutter_callkit_incoming_yoer/entities/call_kit_params.dart';
-import 'package:flutter_callkit_incoming_yoer/entities/ios_params.dart';
-import 'package:flutter_callkit_incoming_yoer/entities/notification_params.dart';
-import 'package:flutter_callkit_incoming_yoer/flutter_callkit_incoming.dart';
+import 'package:flutter_callkit_incoming/entities/android_params.dart';
+import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
+import 'package:flutter_callkit_incoming/entities/ios_params.dart';
+import 'package:flutter_callkit_incoming/entities/notification_params.dart';
+import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:zego_uikit/zego_uikit.dart';
