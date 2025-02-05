@@ -1,12 +1,5 @@
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/config.dart';
-import 'package:zego_uikit_prebuilt_call/src/controller.dart';
-import 'package:zego_uikit_prebuilt_call/src/events.dart';
-import 'package:zego_uikit_prebuilt_call/src/events.defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
-import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_page.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 const deprecatedTipsV4_1_10 = ', '
     'deprecated since 4.1.10, '
@@ -54,8 +47,8 @@ typedef ZegoRingtoneConfig = ZegoCallRingtoneConfig;
 @Deprecated('use ZegoCallPrebuiltConfigQuery instead$deprecatedTipsV4_1_10')
 typedef PrebuiltConfigQuery = ZegoCallPrebuiltConfigQuery;
 
-@Deprecated('use ZegoCallInvitationType instead$deprecatedTipsV4_1_10')
-typedef ZegoInvitationType = ZegoCallInvitationType;
+@Deprecated('use ZegoCallType instead$deprecatedTipsV4_1_10')
+typedef ZegoInvitationType = ZegoCallType;
 
 @Deprecated(
     'use ZegoUIKitPrebuiltCallMiniOverlayPage instead$deprecatedTipsV4_1_10')

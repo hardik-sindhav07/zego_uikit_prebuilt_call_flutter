@@ -13,8 +13,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       ZegoCallMiniOverlayMachine().state();
 
   /// Is it currently in the minimized state or not
-  bool get isMinimizing => isMinimizingNotifier.value;
-  ValueNotifier<bool> get isMinimizingNotifier => _private.isMinimizingNotifier;
+  bool get isMinimizing => ZegoCallMiniOverlayMachine().isMinimizing;
 
   /// restore the ZegoUIKitPrebuiltCall from minimize
   bool restore(
@@ -24,7 +23,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
   }) {
     if (ZegoCallMiniOverlayPageState.minimizing != state) {
       ZegoLoggerService.logInfo(
-        'restore, is not minimizing, ignore',
+        'is not minimizing, ignore',
         tag: 'call',
         subTag: 'controller.minimize',
       );
@@ -35,7 +34,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     final minimizeData = private.minimizeData;
     if (null == minimizeData) {
       ZegoLoggerService.logError(
-        'restore, prebuiltData is null',
+        'prebuiltData is null',
         tag: 'call',
         subTag: 'controller.minimize',
       );
@@ -54,7 +53,6 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
           final prebuiltCall = ZegoUIKitPrebuiltCall(
             appID: minimizeData.appID,
             appSign: minimizeData.appSign,
-            token: minimizeData.token,
             userID: minimizeData.userID,
             userName: minimizeData.userName,
             callID: minimizeData.callID,
@@ -72,7 +70,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       );
     } catch (e) {
       ZegoLoggerService.logError(
-        'restore, navigator push to call page exception:$e',
+        'navigator push to call page exception:$e',
         tag: 'call',
         subTag: 'controller.minimize',
       );
@@ -91,7 +89,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
     if (ZegoCallMiniOverlayPageState.minimizing ==
         ZegoCallMiniOverlayMachine().state()) {
       ZegoLoggerService.logInfo(
-        'minimize, is minimizing, ignore',
+        'is minimizing, ignore',
         tag: 'call',
         subTag: 'controller.minimize',
       );
@@ -103,8 +101,6 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       ZegoCallMiniOverlayPageState.minimizing,
     );
 
-    ZegoUIKitPrebuiltCallInvitationService().private.inCallPage = false;
-
     try {
       /// pop call page
       Navigator.of(
@@ -113,7 +109,7 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
       ).pop();
     } catch (e) {
       ZegoLoggerService.logError(
-        'minimize, navigator pop exception:$e',
+        'navigator pop exception:$e',
         tag: 'call',
         subTag: 'controller.minimize',
       );
@@ -126,14 +122,6 @@ class ZegoCallControllerMinimizingImpl with ZegoCallControllerMinimizePrivate {
 
   /// if call ended in minimizing state, not need to navigate, just hide the minimize widget.
   void hide() {
-    ZegoLoggerService.logInfo(
-      'hide',
-      tag: 'call',
-      subTag: 'controller.minimize',
-    );
-
-    ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
-
     ZegoCallMiniOverlayMachine().changeState(
       ZegoCallMiniOverlayPageState.idle,
     );

@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 
 class ZegoCallingBuilderInfo {
@@ -13,13 +12,11 @@ class ZegoCallingBuilderInfo {
     required this.inviter,
     required this.invitees,
     required this.callType,
-    required this.customData,
   });
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
-  final ZegoCallInvitationType callType;
-  final String customData;
+  final ZegoCallType callType;
 }
 
 typedef ZegoCallingBackgroundBuilder = Widget? Function(
@@ -87,7 +84,7 @@ class ZegoCallInvitationNotifyPopUpUIConfig {
   ///   onIncomingCallReceived: (
   ///     String callID,
   ///     ZegoCallUser caller,
-  ///     ZegoCallInvitationType callType,
+  ///     ZegoCallType callType,
   ///     List<ZegoCallUser> callees,
   ///     String customData,
   ///   ) {
@@ -141,30 +138,4 @@ class ZegoCallInvitationNotifyPopUpUIConfig {
 enum ZegoCallInvitationPermission {
   camera,
   microphone,
-  systemAlertWindow,
-}
-
-class ZegoCallInvitationPermissions {
-  static List<ZegoCallInvitationPermission> get withoutSystemAlertWindow => [
-        ZegoCallInvitationPermission.camera,
-        ZegoCallInvitationPermission.microphone,
-      ];
-  static List<ZegoCallInvitationPermission> get audio => [
-        ZegoCallInvitationPermission.camera,
-        ZegoCallInvitationPermission.microphone,
-        ZegoCallInvitationPermission.systemAlertWindow,
-      ];
-}
-
-class ZegoCallPermissionConfirmDialogInfo extends ZegoCallConfirmDialogInfo {
-  ZegoCallPermissionConfirmDialogInfo({
-    required String title,
-    String cancelButtonName = 'Deny',
-    String confirmButtonName = 'Allow',
-  }) : super(
-          title: title,
-          message: '',
-          cancelButtonName: cancelButtonName,
-          confirmButtonName: confirmButtonName,
-        );
 }

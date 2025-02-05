@@ -17,9 +17,6 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
   ZegoUIKitPrebuiltCallInvitationData? get _callInvitationConfig =>
       ZegoCallInvitationInternalInstance.instance.callInvitationData;
 
-  bool get _isAdvanceInvitationMode =>
-      ZegoUIKitPrebuiltCallInvitationService().private.isAdvanceInvitationMode;
-
   ZegoCallInvitationInnerText? _innerText;
 
   ZegoUIKitPrebuiltCallEvents? get events => _events;
@@ -33,8 +30,8 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
   }) {
     ZegoLoggerService.logInfo(
       'init by prebuilt',
-      tag: 'call-invitation',
-      subTag: 'service.p',
+      tag: 'call',
+      subTag: 'controller.invitation.p',
     );
 
     _events = events;
@@ -45,146 +42,12 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
   void uninit() {
     ZegoLoggerService.logInfo(
       'un-init by prebuilt',
-      tag: 'call-invitation',
-      subTag: 'service.p',
+      tag: 'call',
+      subTag: 'controller.invitation.p',
     );
 
     _innerText = null;
     _events = null;
-  }
-
-  Future<bool> _addInvitation({
-    required List<ZegoCallUser> callees,
-    required bool isVideoCall,
-    required String callID,
-    required String invitationID,
-    String customData = '',
-    String? resourceID,
-    String? notificationTitle,
-    String? notificationMessage,
-    int timeoutSeconds = 60,
-  }) async {
-    ZegoLoggerService.logInfo(
-      'callees:$callees, '
-      'isVideoCall:$isVideoCall, '
-      'callID:$callID, '
-      'customData:$customData, '
-      'resourceID:$resourceID, '
-      'notificationTitle:$notificationTitle, '
-      'notificationMessage:$notificationMessage, '
-      'timeoutSeconds:$timeoutSeconds',
-      tag: 'call-invitation',
-      subTag: 'service.p, add call invitation',
-    );
-
-    if (!_isAdvanceInvitationMode) {
-      ZegoLoggerService.logError(
-        'please set {ZegoCallInvitationConfig.inCalling.canInvitingInCalling} or {ZegoCallInvitationConfig.missedCall.enableDialBack} to be true',
-        tag: 'call-invitation',
-        subTag: 'service.p, add call invitation',
-      );
-
-      // return false;
-    }
-
-    final localInvitingInviteeIDs = ZegoUIKitPrebuiltCallInvitationService()
-        .private
-        .localInvitingUsersNotifier
-        .value
-        .map((e) => e.id)
-        .toList();
-    callees
-        .removeWhere((callee) => localInvitingInviteeIDs.contains(callee.id));
-    ZegoLoggerService.logInfo(
-      'clear inviting invitee id, '
-      'localInvitingInviteeIDs:$localInvitingInviteeIDs, '
-      'now callee is:$callees, ',
-      tag: 'call-invitation',
-      subTag: 'service.p, add call invitation',
-    );
-
-    if (callees.isEmpty) {
-      ZegoLoggerService.logInfo(
-        'callees is empty',
-        tag: 'call-invitation',
-        subTag: 'service.p, add call invitation',
-      );
-
-      return false;
-    }
-
-    ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers([
-      ...ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .localInvitingUsersNotifier
-          .value,
-      ...callees,
-    ]);
-
-    return ZegoUIKit()
-        .getSignalingPlugin()
-        .addAdvanceInvitation(
-          inviterID: ZegoUIKit().getLocalUser().id,
-          inviterName: ZegoUIKit().getLocalUser().name,
-          invitees: callees.map((user) {
-            return user.id;
-          }).toList(),
-          invitationID: invitationID,
-          type: ZegoCallTypeExtension(
-            isVideoCall
-                ? ZegoCallInvitationType.videoCall
-                : ZegoCallInvitationType.voiceCall,
-          ).value,
-          data: ZegoCallInvitationSendRequestProtocol(
-            callID: callID,
-            inviterName: ZegoUIKit().getLocalUser().name,
-            invitees: callees
-                .map((invitee) => ZegoUIKitUser(
-                      id: invitee.id,
-                      name: invitee.name,
-                    ))
-                .toList(),
-            timeout: timeoutSeconds,
-            customData: customData,
-          ).toJson(),
-          zegoNotificationConfig: ZegoNotificationConfig(
-            notifyWhenAppIsInTheBackgroundOrQuit: true,
-            resourceID: resourceID ?? '',
-            title: getNotificationTitle(
-              defaultTitle: notificationTitle,
-              callees: callees,
-              isVideoCall: isVideoCall,
-              innerText: _innerText,
-            ),
-            message: getNotificationMessage(
-              defaultMessage: notificationMessage,
-              callees: callees,
-              isVideoCall: isVideoCall,
-              innerText: _innerText,
-            ),
-          ),
-        )
-        .then((result) {
-      _pageManager?.onLocalAddInvitation(
-        callID: callID,
-        invitees: callees
-            .map((invitee) => ZegoUIKitUser(
-                  id: invitee.id,
-                  name: invitee.name,
-                ))
-            .toList(),
-        invitationType: isVideoCall
-            ? ZegoCallInvitationType.videoCall
-            : ZegoCallInvitationType.voiceCall,
-        customData: customData,
-        code: result.error?.code ?? '',
-        message: result.error?.message ?? '',
-        invitationID: result.invitationID,
-        errorInvitees: result.errorInvitees.keys.toList(),
-      );
-
-      return result.error?.code.isEmpty ?? true;
-    });
   }
 
   Future<bool> _sendInvitation({
@@ -198,6 +61,7 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     int timeoutSeconds = 60,
   }) {
     ZegoLoggerService.logInfo(
+      'cancel call invitation, '
       'callees:$callees, '
       'isVideoCall:$isVideoCall, '
       'callID:$callID, '
@@ -206,60 +70,60 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
       'notificationTitle:$notificationTitle, '
       'notificationMessage:$notificationMessage, '
       'timeoutSeconds:$timeoutSeconds',
-      tag: 'call-invitation',
-      subTag: 'service.p, send call invitation',
+      tag: 'call',
+      subTag: 'controller.invitation.p',
     );
 
-    ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
-          List.from(callees),
-        );
-
-    final sendProtocol = ZegoCallInvitationSendRequestProtocol(
-      callID: callID,
-      inviterName: ZegoUIKit().getLocalUser().name,
-      invitees: callees
-          .map((invitee) => ZegoUIKitUser(
-                id: invitee.id,
-                name: invitee.name,
-              ))
-          .toList(),
-      timeout: timeoutSeconds,
-      customData: customData,
-    ).toJson();
-    final sendInvitationType = ZegoCallTypeExtension(
-      isVideoCall
-          ? ZegoCallInvitationType.videoCall
-          : ZegoCallInvitationType.voiceCall,
-    ).value;
-    final sendNotificationConfig = ZegoNotificationConfig(
-      notifyWhenAppIsInTheBackgroundOrQuit: true,
-      resourceID: resourceID ?? '',
-      title: getNotificationTitle(
-        defaultTitle: notificationTitle,
-        callees: callees,
-        isVideoCall: isVideoCall,
-        innerText: _innerText,
-      ),
-      message: getNotificationMessage(
-        defaultMessage: notificationMessage,
-        callees: callees,
-        isVideoCall: isVideoCall,
-        innerText: _innerText,
-      ),
-    );
-
-    Future<bool> sendInvitationCallback(
-      ZegoSignalingPluginSendInvitationResult result,
-    ) async {
-      ZegoUIKit().reporter().report(
-        event: ZegoCallReporter.eventSendInvitation,
-        params: {
-          ZegoUIKitSignalingReporter.eventKeyInvitationID: result.invitationID,
-          ZegoCallReporter.eventKeyInvitationSource:
-              ZegoCallReporter.eventKeyInvitationSourceAPI,
-        },
-      );
-
+    return ZegoUIKit()
+        .getSignalingPlugin()
+        .sendInvitation(
+          inviterID: ZegoUIKit().getLocalUser().id,
+          inviterName: ZegoUIKit().getLocalUser().name,
+          invitees: callees.map((user) {
+            return user.id;
+          }).toList(),
+          timeout: timeoutSeconds,
+          type: ZegoCallTypeExtension(
+            isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
+          ).value,
+          data: ZegoCallInvitationSendRequestProtocol(
+            callID: callID,
+            invitees: callees
+                .map((invitee) => ZegoUIKitUser(
+                      id: invitee.id,
+                      name: invitee.name,
+                    ))
+                .toList(),
+            timeout: timeoutSeconds,
+            customData: customData,
+          ).toJson(),
+          zegoNotificationConfig: ZegoNotificationConfig(
+            notifyWhenAppIsInTheBackgroundOrQuit: true,
+            resourceID: resourceID ?? '',
+            title: notificationTitle ??
+                (isVideoCall
+                        ? ((callees.length > 1
+                                ? _innerText?.incomingGroupVideoCallDialogTitle
+                                : _innerText?.incomingVideoCallDialogTitle) ??
+                            param_1)
+                        : ((callees.length > 1
+                                ? _innerText?.incomingGroupVoiceCallDialogTitle
+                                : _innerText?.incomingVoiceCallDialogTitle) ??
+                            param_1))
+                    .replaceFirst(param_1, ZegoUIKit().getLocalUser().name),
+            message: notificationMessage ??
+                (isVideoCall
+                    ? ((callees.length > 1
+                            ? _innerText?.incomingGroupVideoCallDialogMessage
+                            : _innerText?.incomingVideoCallDialogMessage) ??
+                        'Incoming video call...')
+                    : ((callees.length > 1
+                            ? _innerText?.incomingGroupVoiceCallDialogMessage
+                            : _innerText?.incomingVoiceCallDialogMessage) ??
+                        'Incoming voice call...')),
+          ),
+        )
+        .then((result) {
       _pageManager?.onLocalSendInvitation(
         callID: callID,
         invitees: callees
@@ -268,56 +132,17 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
                   name: invitee.name,
                 ))
             .toList(),
-        invitationType: isVideoCall
-            ? ZegoCallInvitationType.videoCall
-            : ZegoCallInvitationType.voiceCall,
+        invitationType:
+            isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
         customData: customData,
         code: result.error?.code ?? '',
         message: result.error?.message ?? '',
         invitationID: result.invitationID,
         errorInvitees: result.errorInvitees.keys.toList(),
-        localConfig: ZegoCallInvitationLocalParameter(
-          resourceID: resourceID,
-          notificationTitle: notificationTitle,
-          notificationMessage: notificationMessage,
-          timeoutSeconds: timeoutSeconds,
-        ),
       );
 
-      return result.error?.code.isEmpty ?? true;
-    }
-
-    if (_isAdvanceInvitationMode) {
-      return ZegoUIKit()
-          .getSignalingPlugin()
-          .sendAdvanceInvitation(
-            inviterID: ZegoUIKit().getLocalUser().id,
-            inviterName: ZegoUIKit().getLocalUser().name,
-            invitees: callees.map((user) {
-              return user.id;
-            }).toList(),
-            timeout: timeoutSeconds,
-            type: sendInvitationType,
-            data: sendProtocol,
-            zegoNotificationConfig: sendNotificationConfig,
-          )
-          .then(sendInvitationCallback);
-    } else {
-      return ZegoUIKit()
-          .getSignalingPlugin()
-          .sendInvitation(
-            inviterID: ZegoUIKit().getLocalUser().id,
-            inviterName: ZegoUIKit().getLocalUser().name,
-            invitees: callees.map((user) {
-              return user.id;
-            }).toList(),
-            timeout: timeoutSeconds,
-            type: sendInvitationType,
-            data: sendProtocol,
-            zegoNotificationConfig: sendNotificationConfig,
-          )
-          .then(sendInvitationCallback);
-    }
+      return result.error?.code.isNotEmpty ?? true;
+    });
   }
 
   Future<bool> _cancelInvitation({
@@ -325,48 +150,29 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     String customData = '',
   }) async {
     ZegoLoggerService.logInfo(
-      'callees:$callees',
-      tag: 'call-invitation',
-      subTag: 'service.p, cancel call invitation',
+      'cancel call invitation, callees:$callees',
+      tag: 'call',
+      subTag: 'controller.invitation.p',
     );
 
-    Future<bool> callback(
-      ZegoSignalingPluginCancelInvitationResult result,
-    ) async {
+    return ZegoUIKit()
+        .getSignalingPlugin()
+        .cancelInvitation(
+          invitees: callees.map((e) => e.id).toList(),
+          data: ZegoCallInvitationCancelRequestProtocol(
+            callID: _pageManager?.currentCallID ?? '',
+            customData: customData,
+          ).toJson(),
+        )
+        .then((result) async {
       _pageManager?.onLocalCancelInvitation(
-        result.invitationID,
         result.error?.code ?? '',
         result.error?.message ?? '',
         result.errorInvitees,
       );
 
-      return result.error?.code.isEmpty ?? true;
-    }
-
-    if (_isAdvanceInvitationMode) {
-      return ZegoUIKit()
-          .getSignalingPlugin()
-          .cancelAdvanceInvitation(
-            invitees: callees.map((e) => e.id).toList(),
-            data: ZegoCallInvitationCancelRequestProtocol(
-              callID: _pageManager?.currentCallID ?? '',
-              customData: customData,
-            ).toJson(),
-            invitationID: _pageManager?.invitationData.invitationID ?? '',
-          )
-          .then(callback);
-    } else {
-      return ZegoUIKit()
-          .getSignalingPlugin()
-          .cancelInvitation(
-            invitees: callees.map((e) => e.id).toList(),
-            data: ZegoCallInvitationCancelRequestProtocol(
-              callID: _pageManager?.currentCallID ?? '',
-              customData: customData,
-            ).toJson(),
-          )
-          .then(callback);
-    }
+      return result.error?.code.isNotEmpty ?? true;
+    });
   }
 
   Future<bool> _rejectInvitation({
@@ -374,49 +180,30 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     String customData = '',
   }) async {
     ZegoLoggerService.logInfo(
-      'callerID:$callerID',
-      tag: 'call-invitation',
-      subTag: 'service.p, reject call invitation',
+      'reject call invitation, callerID:$callerID',
+      tag: 'call',
+      subTag: 'controller.invitation.p',
     );
 
     _pageManager?.hideInvitationTopSheet();
 
-    Future<bool> callback(
-      ZegoSignalingPluginResponseInvitationResult result,
-    ) async {
+    return ZegoUIKit()
+        .getSignalingPlugin()
+        .refuseInvitation(
+          inviterID: callerID,
+          data: ZegoCallInvitationRejectRequestProtocol(
+            reason: ZegoCallInvitationProtocolKey.refuseByDecline,
+            customData: customData,
+          ).toJson(),
+        )
+        .then((result) {
       _pageManager?.onLocalRefuseInvitation(
-        result.invitationID,
         result.error?.code ?? '',
         result.error?.message ?? '',
       );
 
-      return result.error?.code.isEmpty ?? true;
-    }
-
-    if (_isAdvanceInvitationMode) {
-      return ZegoUIKit()
-          .getSignalingPlugin()
-          .refuseAdvanceInvitation(
-            inviterID: callerID,
-            data: ZegoCallInvitationRejectRequestProtocol(
-              reason: ZegoCallInvitationProtocolKey.refuseByDecline,
-              customData: customData,
-            ).toJson(),
-            invitationID: _pageManager?.invitationData.invitationID ?? '',
-          )
-          .then(callback);
-    } else {
-      return ZegoUIKit()
-          .getSignalingPlugin()
-          .refuseInvitation(
-            inviterID: callerID,
-            data: ZegoCallInvitationRejectRequestProtocol(
-              reason: ZegoCallInvitationProtocolKey.refuseByDecline,
-              customData: customData,
-            ).toJson(),
-          )
-          .then(callback);
-    }
+      return result.error?.code.isNotEmpty ?? true;
+    });
   }
 
   Future<bool> _acceptInvitation({
@@ -424,63 +211,28 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     String customData = '',
   }) async {
     ZegoLoggerService.logInfo(
-      'callerID:$callerID',
-      tag: 'call-invitation',
-      subTag: 'service.p, accept call invitation',
+      'accept call invitation, callerID:$callerID',
+      tag: 'call',
+      subTag: 'controller.invitation.p',
     );
 
     _pageManager?.hideInvitationTopSheet();
 
-    Future<bool> callback(
-      ZegoSignalingPluginResponseInvitationResult result,
-    ) async {
+    return ZegoUIKit()
+        .getSignalingPlugin()
+        .acceptInvitation(
+          inviterID: callerID,
+          data: ZegoCallInvitationAcceptRequestProtocol(
+            customData: customData,
+          ).toJson(),
+        )
+        .then((result) {
       _pageManager?.onLocalAcceptInvitation(
-        result.invitationID,
         result.error?.code ?? '',
         result.error?.message ?? '',
       );
 
-      return result.error?.code.isEmpty ?? true;
-    }
-
-    if (_isAdvanceInvitationMode) {
-      return ZegoUIKit()
-          .getSignalingPlugin()
-          .acceptAdvanceInvitation(
-            inviterID: callerID,
-            data: ZegoCallInvitationAcceptRequestProtocol(
-              customData: customData,
-            ).toJson(),
-            invitationID: _pageManager?.invitationData.invitationID ?? '',
-          )
-          .then(callback);
-    } else {
-      return ZegoUIKit()
-          .getSignalingPlugin()
-          .acceptInvitation(
-            inviterID: callerID,
-            data: ZegoCallInvitationAcceptRequestProtocol(
-              customData: customData,
-            ).toJson(),
-          )
-          .then(callback);
-    }
-  }
-
-  Future<bool> _joinInvitation({
-    required String invitationID,
-    String? customData = '',
-  }) {
-    return ZegoUIKit()
-        .getSignalingPlugin()
-        .joinAdvanceInvitation(
-          invitationID: invitationID,
-          data: ZegoCallInvitationAcceptRequestProtocol(
-            customData: customData ?? '',
-          ).toJson(),
-        )
-        .then((result) {
-      return result.error?.code.isEmpty ?? true;
+      return result.error?.code.isNotEmpty ?? true;
     });
   }
 
@@ -505,10 +257,10 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
 
   bool _checkParamValid() {
     if (null == _pageManager || null == _callInvitationConfig) {
-      ZegoLoggerService.logWarn(
+      ZegoLoggerService.logInfo(
         'param is invalid, page manager:$_pageManager, invitation config:$_callInvitationConfig',
-        tag: 'call-invitation',
-        subTag: 'service.p',
+        tag: 'call',
+        subTag: 'controller.invitation.p',
       );
 
       return false;
@@ -521,13 +273,10 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     if (ZegoSignalingPluginConnectionState.connected !=
         ZegoUIKit().getSignalingPlugin().getConnectionState()) {
       ZegoLoggerService.logError(
-        'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}, '
-        'ZegoUIKitPrebuiltCallInvitationService is init: ${ZegoUIKitPrebuiltCallInvitationService().isInit}'
-        'please call ZegoUIKitPrebuiltCallInvitationService.init with ZegoUIKitSignalingPlugin first',
-        tag: 'call-invitation',
-        subTag: 'service.p',
+        'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}',
+        tag: 'call',
+        subTag: 'controller.invitation.p',
       );
-
       return false;
     }
 
@@ -539,31 +288,31 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
         _pageManager?.invitationData.callID.isNotEmpty ?? false;
 
     if (!isInInvitation) {
-      ZegoLoggerService.logWarn(
+      ZegoLoggerService.logInfo(
         'not in invitation, '
         'invitationData:${_pageManager?.invitationData}',
-        tag: 'call-invitation',
-        subTag: 'service.p',
+        tag: 'call',
+        subTag: 'controller.invitation',
       );
     }
 
     return isInInvitation;
   }
 
-  bool _checkInCall() {
+  bool _checkInCalling() {
     final currentState =
         _pageManager?.callingMachine?.machine.current?.identifier ??
             CallingState.kIdle;
-    if (CallingState.kOnlineAudioVideo == currentState) {
-      ZegoLoggerService.logWarn(
-        'in call now, $currentState',
-        tag: 'call-invitation',
-        subTag: 'service.p',
+    if (CallingState.kIdle != currentState) {
+      ZegoLoggerService.logInfo(
+        'in calling now, $currentState',
+        tag: 'call',
+        subTag: 'controller.invitation.p',
       );
-      return true;
+      return false;
     }
 
-    return false;
+    return true;
   }
 
   bool _checkInNotCalling() {
@@ -573,10 +322,10 @@ class ZegoCallInvitationServiceAPIPrivateImpl {
     if (CallingState.kCallingWithVoice != currentState &&
         CallingState.kCallingWithVideo != currentState &&
         CallingState.kOnlineAudioVideo != currentState) {
-      ZegoLoggerService.logWarn(
+      ZegoLoggerService.logInfo(
         'not in calling now, $currentState',
-        tag: 'call-invitation',
-        subTag: 'service.p',
+        tag: 'call',
+        subTag: 'controller.invitation.p',
       );
       return false;
     }

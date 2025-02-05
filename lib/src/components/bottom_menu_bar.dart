@@ -12,7 +12,6 @@ import 'package:zego_uikit_prebuilt_call/src/components/effects/beauty_effect_bu
 import 'package:zego_uikit_prebuilt_call/src/components/effects/sound_effect_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/member/list_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/message/in_room_message_button.dart';
-import 'package:zego_uikit_prebuilt_call/src/components/pip_button.dart';
 import 'package:zego_uikit_prebuilt_call/src/components/pop_up_manager.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.dart';
 import 'package:zego_uikit_prebuilt_call/src/controller.dart';
@@ -133,14 +132,10 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
   }
 
   List<Widget> getDisplayButtons(BuildContext context) {
-    final needRestoreDeviceState =
-        widget.minimizeData.isPrebuiltFromMinimizing ||
-            ZegoUIKitPrebuiltCallController().pip.private.isRestoreFromPIP;
-
     final buttonList = <Widget>[
       ...getDefaultButtons(
         context,
-        cameraDefaultValueFunc: needRestoreDeviceState
+        cameraDefaultValueFunc: widget.minimizeData.isPrebuiltFromMinimizing
             ? () {
                 /// if is minimizing, take the local device state
                 return ZegoUIKit()
@@ -148,7 +143,7 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
                     .value;
               }
             : null,
-        microphoneDefaultValueFunc: needRestoreDeviceState
+        microphoneDefaultValueFunc: widget.minimizeData.isPrebuiltFromMinimizing
             ? () {
                 /// if is minimizing, take the local device state
                 return ZegoUIKit()
@@ -327,7 +322,7 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
             }
             return canHangUp;
           },
-          onPress: () async {
+          onPress: () {
             ZegoLoggerService.logInfo(
               'restore mini state by hang up',
               tag: 'call',
@@ -337,20 +332,17 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
               ZegoCallMiniOverlayPageState.idle,
             );
 
-            await ZegoUIKitPrebuiltCallController().pip.cancelBackground();
-
-            // await ZegoUIKitPrebuiltCallInvitationService()
-            //     .private
-            //     .clearInvitation();
+            /// because group call invitation enter call directly,
+            /// so need cancel if end call
+            ZegoUIKitPrebuiltCallInvitationService()
+                .private
+                .cancelGroupCallInvitation();
 
             final callEndEvent = ZegoCallEndEvent(
               callID: widget.minimizeData.callID,
               reason: ZegoCallEndReason.localHangUp,
               isFromMinimizing: ZegoCallMiniOverlayPageState.minimizing ==
                   ZegoUIKitPrebuiltCallController().minimize.state,
-              invitationData: ZegoUIKitPrebuiltCallInvitationService()
-                  .private
-                  .currentCallInvitationData,
             );
             defaultAction() {
               widget.defaultEndAction(callEndEvent);
@@ -382,11 +374,6 @@ class _ZegoCallBottomMenuBarState extends State<ZegoCallBottomMenuBar> {
       case ZegoCallMenuBarButtonName.minimizingButton:
         return ZegoCallMinimizingButton(
           rootNavigator: widget.config.rootNavigator,
-        );
-      case ZegoCallMenuBarButtonName.pipButton:
-        return ZegoCallPIPButton(
-          aspectWidth: widget.config.pip.aspectWidth,
-          aspectHeight: widget.config.pip.aspectHeight,
         );
       case ZegoCallMenuBarButtonName.beautyEffectButton:
         return ZegoCallBeautyEffectButton(

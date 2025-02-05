@@ -1,31 +1,26 @@
 
-- [ZegoUIKitPrebuiltCall](#zegouikitprebuiltcall)
-- [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservice)
-  - [setNavigatorKey](#setnavigatorkey)
-  - [isInCalling](#isincalling)
+- [ZegoUIKitPrebuiltCall](#zegouikitprebuiltcallzego_uikit_prebuilt_callzegouikitprebuiltcall-classhtml)
+- [ZegoUIKitPrebuiltCallConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoUIKitPrebuiltCallConfig-class.html)
+- [ZegoUIKitPrebuiltCallInvitationService](#zegouikitprebuiltcallinvitationservicezego_uikit_prebuilt_callzegouikitprebuiltcallinvitationservice-classhtml)
   - [init](#init)
   - [uninit](#uninit)
+  - [setNavigatorKey](#setnavigatorkey)
   - [useSystemCallingUI](#usesystemcallingui)
-    - [send](#send)
-    - [cancel](#cancel)
-    - [reject](#reject)
-    - [accept](#accept)
-- [ZegoUIKitPrebuiltCallController](#zegouikitprebuiltcallcontroller)
+  - [send](#send)
+  - [cancel](#cancel)
+  - [reject](#reject)
+  - [accept](#accept)
+- [ZegoUIKitPrebuiltCallController](#zegouikitprebuiltcallcontrollerzego_uikit_prebuilt_callzegouikitprebuiltcallcontroller-classhtml)
   - [hangUp](#hangup)
+  - [minimize](#minimize)
+    - [isMinimizing](#isminimizing)
+    - [state](#state)
+    - [restore](#restore)
+    - [minimize](#minimize-2)
+    - [hide](#hide)
   - [screenSharing](#screensharing)
     - [viewController](#viewcontroller)
     - [showViewInFullscreenMode](#showviewinfullscreenmode)
-  - [minimize](#minimize)
-    - [isMinimizingNotifier(ValueNotifier)](#isminimizingnotifiervaluenotifier)
-    - [isMinimizing(bool)](#isminimizingbool)
-    - [state(ZegoCallMiniOverlayPageState)](#statezegocallminioverlaypagestate)
-    - [restore](#restore)
-    - [minimize](#minimize-1)
-    - [hide](#hide)
-  - [pip](#pip)
-    - [enable](#enable)
-    - [enableWhenBackground](#enablewhenbackground)
-    - [cancelBackground](#cancelbackground)
   - [audioVideo](#audiovideo)
     - [camera](#camera)
       - [localState](#localstate)
@@ -47,7 +42,7 @@
       - [localNotifier](#localnotifier)
       - [notifier](#notifier)
       - [switchToSpeaker](#switchtospeaker)
-  - [user](#user)
+  - [user]
     - [stream](#stream)
     - [remove](#remove)
   
@@ -155,8 +150,7 @@
 > ```dart
 > Future<void> init({
 >    required int appID,
->    String appSign = '',
->    String token = '',
+>    required String appSign,
 >    required String userID,
 >    required String userName,
 >    required List<IZegoUIKitPlugin> plugins,
@@ -342,22 +336,6 @@
 
 ## minimize
 
-### isMinimizingNotifier(ValueNotifier<bool>)
-
-> is it currently in the minimized state or not
->
-> - example:
->
-> ```dart
-> ValueListenableBuilder<bool>(
->   valueListenable:
->   ZegoUIKitPrebuiltCallController().minimize.isMinimizingNotifier,
->   builder: (context, isMinimized, _) {
->     ...
->   },
-> )
-> ```
-
 ### isMinimizing(bool)
 
 > is it currently in the minimized state or not
@@ -443,42 +421,6 @@
 > ```dart
 > ZegoUIKitPrebuiltCallController().minimize.hide();
 > ```
-
-## pip
-
-### enable
-
->
-> - function prototype:
->
-> ```dart
-> Future<PiPStatus> enable({
->   int aspectWidth = 9,
->   int aspectHeight = 16,
-> }) async
-> ```
-
-### enableWhenBackground
-
->
-> - function prototype:
->
-> ```dart
-> Future<PiPStatus> enableWhenBackground({
->   int aspectWidth = 9,
->   int aspectHeight = 16,
-> }) async
-> ```
-
-### cancelBackground
-
->
-> - function prototype:
->
-> ```dart
-> Future<PiPStatus> cancelBackground() async
-> ```
-
 
 ## audioVideo
 

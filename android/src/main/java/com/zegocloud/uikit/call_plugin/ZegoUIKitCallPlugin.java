@@ -1,9 +1,5 @@
 package com.zegocloud.uikit.call_plugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -24,8 +20,8 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 import com.zegocloud.uikit.call_plugin.notification.PluginNotification;
-import com.zegocloud.uikit.call_plugin.Defines;
 
+import java.util.List;
 
 /**
  * ZegoUIKitCallPlugin
@@ -92,9 +88,8 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
             String soundSource = call.argument(Defines.FLUTTER_PARAM_SOUND_SOURCE);
             String notificationId = call.argument(Defines.FLUTTER_PARAM_ID);
             Boolean isVibrate = call.argument(Defines.FLUTTER_PARAM_VIBRATE);
-            Boolean isVideo = call.argument(Defines.FLUTTER_PARAM_IS_VIDEO);
 
-            notification.addLocalCallNotification(context, title, content, acceptButtonText, rejectButtonText, channelID, soundSource, iconSource, notificationId, isVibrate, isVideo);
+            notification.addLocalCallNotification(context, title, content, acceptButtonText, rejectButtonText, channelID, soundSource, iconSource, notificationId, isVibrate);
 
             result.success(null);
         } else if (call.method.equals(Defines.FLUTTER_API_FUNC_CREATE_NOTIFICATION_CHANNEL)) {
@@ -106,18 +101,20 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
             notification.createNotificationChannel(context, channelID, channelName, soundSource, isVibrate);
 
             result.success(null);
-        } else if (call.method.equals(Defines.FLUTTER_API_FUNC_DISMISS_NOTIFICATION)) {
-            String notificationIdString = call.argument(Defines.FLUTTER_PARAM_NOTIFICATION_ID);
-            Log.d("dismiss notification", notificationIdString);
-            int notificationID = Integer.parseInt(notificationIdString);
-
-            notification.dismissNotification(context, notificationID);
-
-            result.success(null);
         } else if (call.method.equals(Defines.FLUTTER_API_FUNC_DISMISS_ALL_NOTIFICATIONS)) {
             notification.dismissAllNotifications(context);
 
             result.success(null);
+        } else if (call.method.equals(Defines.FLUTTER_API_FUNC_ACTIVE_APP_TO_FOREGROUND)) {
+            notification.activeAppToForeground(context);
+
+            result.success(null);
+        } else if (call.method.equals(Defines.FLUTTER_API_FUNC_REQUEST_DISMISS_KEYGUARD)) {
+            notification.requestDismissKeyguard(context, activityBinding.getActivity());
+
+            result.success(null);
+        } else if (call.method.equals(Defines.FLUTTER_API_FUNC_CHECK_APP_RUNNING)) {
+            result.success(isAppRunning());
         } else {
             result.notImplemented();
         }
@@ -152,6 +149,24 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
     public void onDetachedFromActivity() {
         Log.d("call plugin", "onDetachedFromActivity");
         activityBinding = null;
+    }
+
+    private boolean isAppRunning() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+            ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = activityManager.getRunningAppProcesses();
+            if (runningAppProcesses != null) {
+                for (ActivityManager.RunningAppProcessInfo processInfo : runningAppProcesses) {
+                    Log.d("call plugin", "running app: " + processInfo.processName);
+
+                    if (processInfo.processName.equals(context.getPackageName())) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     // BroadcastReceiver by other classes.
@@ -207,13 +222,7 @@ public class ZegoUIKitCallPlugin extends BroadcastReceiver implements FlutterPlu
     }
 
     private void onBroadcastNotificationIMClicked(Intent intent) {
-        int notificationID = intent.getIntExtra(Defines.FLUTTER_PARAM_NOTIFICATION_ID, -1);
-
-        Log.d("call plugin", String.format("onBroadcastNotificationIMClicked, notification id: %d", notificationID));
-
-        Map<String, Object> arguments = new HashMap<>();
-        arguments.put(Defines.FLUTTER_PARAM_NOTIFICATION_ID, notificationID);
-
-        methodChannel.invokeMethod(Defines.ACTION_CLICK_IM_CB_FUNC, arguments);
+        Log.d("call plugin", "onBroadcastNotificationIMClicked");
+        methodChannel.invokeMethod(Defines.ACTION_CLICK_IM_CB_FUNC, null);
     }
 }

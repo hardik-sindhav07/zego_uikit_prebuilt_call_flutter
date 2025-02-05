@@ -20,67 +20,24 @@ class ZegoCallInvitationServiceAPIImpl
   }) async {
     ZegoLoggerService.logInfo(
       'send call invitation',
-      tag: 'call-invitation',
-      subTag: 'service, send',
+      tag: 'call',
+      subTag: 'controller.invitation',
     );
 
     if (!private._checkParamValid()) {
-      ZegoLoggerService.logInfo(
-        'parameter is not valid',
-        tag: 'call-invitation',
-        subTag: 'service, send',
-      );
-
       return false;
     }
 
     if (!private._checkSignalingPlugin()) {
-      ZegoLoggerService.logInfo(
-        'signaling plugin is null',
-        tag: 'call-invitation',
-        subTag: 'service, send',
-      );
-
       return false;
     }
 
-    sendInvitationFunc(callID) {
-      return private._checkInCall()
-          ? private._addInvitation(
-              callees: invitees,
-              isVideoCall: isVideoCall,
-              callID: callID,
-              invitationID: ZegoUIKitPrebuiltCallInvitationService()
-                  .private
-                  .currentCallInvitationDataSafe
-                  .invitationID,
-              customData: customData,
-              resourceID: resourceID,
-              timeoutSeconds: timeoutSeconds,
-              notificationTitle: notificationTitle,
-              notificationMessage: notificationMessage,
-            )
-          : private._sendInvitation(
-              callees: invitees,
-              isVideoCall: isVideoCall,
-              callID: callID,
-              customData: customData,
-              resourceID: resourceID,
-              timeoutSeconds: timeoutSeconds,
-              notificationTitle: notificationTitle,
-              notificationMessage: notificationMessage,
-            );
+    if (!private._checkInCalling()) {
+      return false;
     }
 
     final currentCallID = callID ??
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
-    if ((callID?.isNotEmpty ?? false) && currentCallID != callID) {
-      ZegoLoggerService.logWarn(
-        'callID($callID) is not valid, replace by $currentCallID',
-        tag: 'call-invitation',
-        subTag: 'service, invitation',
-      );
-    }
     if (private._pageManager?.callingMachine?.isPagePushed ?? false) {
       return private._waitUntil(() {
         if (null == private._pageManager?.callingMachine) {
@@ -88,11 +45,29 @@ class ZegoCallInvitationServiceAPIImpl
         }
         return private._pageManager!.callingMachine!.isPagePushed;
       }).then((value) {
-        return sendInvitationFunc(currentCallID);
+        return private._sendInvitation(
+          callees: invitees,
+          isVideoCall: isVideoCall,
+          callID: currentCallID,
+          customData: customData,
+          resourceID: resourceID,
+          timeoutSeconds: timeoutSeconds,
+          notificationTitle: notificationTitle,
+          notificationMessage: notificationMessage,
+        );
       });
     }
 
-    return sendInvitationFunc(currentCallID);
+    return private._sendInvitation(
+      callees: invitees,
+      isVideoCall: isVideoCall,
+      callID: currentCallID,
+      customData: customData,
+      resourceID: resourceID,
+      timeoutSeconds: timeoutSeconds,
+      notificationTitle: notificationTitle,
+      notificationMessage: notificationMessage,
+    );
   }
 
   Future<bool> cancel({
@@ -101,27 +76,15 @@ class ZegoCallInvitationServiceAPIImpl
   }) async {
     ZegoLoggerService.logInfo(
       'cancel call invitation',
-      tag: 'call-invitation',
-      subTag: 'service, invitation',
+      tag: 'call',
+      subTag: 'controller.invitation',
     );
 
     if (!private._checkParamValid()) {
-      ZegoLoggerService.logInfo(
-        'parameter is not valid',
-        tag: 'call-invitation',
-        subTag: 'service, cancel',
-      );
-
       return false;
     }
 
     if (!private._checkSignalingPlugin()) {
-      ZegoLoggerService.logInfo(
-        'signaling plugin is null',
-        tag: 'call-invitation',
-        subTag: 'service, cancel',
-      );
-
       return false;
     }
 
@@ -140,31 +103,19 @@ class ZegoCallInvitationServiceAPIImpl
   }) async {
     ZegoLoggerService.logInfo(
       'reject call invitation',
-      tag: 'call-invitation',
-      subTag: 'service, invitation',
+      tag: 'call',
+      subTag: 'controller.invitation',
     );
 
     if (!private._checkParamValid()) {
-      ZegoLoggerService.logInfo(
-        'parameter is not valid',
-        tag: 'call-invitation',
-        subTag: 'service, reject',
-      );
-
       return false;
     }
 
     if (!private._checkSignalingPlugin()) {
-      ZegoLoggerService.logInfo(
-        'signaling plugin is null',
-        tag: 'call-invitation',
-        subTag: 'service, reject',
-      );
-
       return false;
     }
 
-    if (private._checkInCall()) {
+    if (!private._checkInCalling()) {
       return false;
     }
 
@@ -183,31 +134,19 @@ class ZegoCallInvitationServiceAPIImpl
   }) async {
     ZegoLoggerService.logInfo(
       'accept call invitation',
-      tag: 'call-invitation',
-      subTag: 'service, accept',
+      tag: 'call',
+      subTag: 'controller.invitation',
     );
 
     if (!private._checkParamValid()) {
-      ZegoLoggerService.logInfo(
-        'parameter is not valid',
-        tag: 'call-invitation',
-        subTag: 'service, accept',
-      );
-
       return false;
     }
 
     if (!private._checkSignalingPlugin()) {
-      ZegoLoggerService.logInfo(
-        'signaling plugin is null',
-        tag: 'call-invitation',
-        subTag: 'service, accept',
-      );
-
       return false;
     }
 
-    if (private._checkInCall()) {
+    if (!private._checkInCalling()) {
       return false;
     }
 
@@ -217,42 +156,6 @@ class ZegoCallInvitationServiceAPIImpl
 
     return private._acceptInvitation(
       callerID: private._pageManager?.invitationData.inviter?.id ?? '',
-      customData: customData,
-    );
-  }
-
-  Future<bool> join({
-    required String invitationID,
-    String? customData = '',
-  }) async {
-    ZegoLoggerService.logInfo(
-      'send call invitation',
-      tag: 'call-invitation',
-      subTag: 'service, join',
-    );
-
-    if (!private._checkParamValid()) {
-      ZegoLoggerService.logInfo(
-        'parameter is not valid',
-        tag: 'call-invitation',
-        subTag: 'service, join',
-      );
-
-      return false;
-    }
-
-    if (!private._checkSignalingPlugin()) {
-      ZegoLoggerService.logInfo(
-        'signaling plugin is null',
-        tag: 'call-invitation',
-        subTag: 'service, join',
-      );
-
-      return false;
-    }
-
-    return private._joinInvitation(
-      invitationID: invitationID,
       customData: customData,
     );
   }

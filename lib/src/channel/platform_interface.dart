@@ -32,6 +32,11 @@ abstract class ZegoCallPluginPlatform extends PlatformInterface {
     throw UnimplementedError('activeAudioByCallKit has not been implemented.');
   }
 
+  /// checkAppRunning
+  Future<bool> checkAppRunning() {
+    throw UnimplementedError('checkAppRunning has not been implemented.');
+  }
+
   /// addLocalCallNotification
   Future<void> addLocalCallNotification(
     ZegoSignalingPluginLocalCallNotificationConfig config,
@@ -57,14 +62,18 @@ abstract class ZegoCallPluginPlatform extends PlatformInterface {
   }
 
   /// dismissAllNotifications
-  Future<void> dismissNotification(int notificationID) {
+  Future<void> dismissAllNotifications() {
     throw UnimplementedError(
         'dismissAllNotifications has not been implemented.');
   }
 
-  /// dismissAllNotifications
-  Future<void> dismissAllNotifications() {
+  /// activeAppToForeground
+  Future<void> activeAppToForeground() {
+    throw UnimplementedError('activeAppToForeground has not been implemented.');
+  }
+
+  Future<void> requestDismissKeyguard() {
     throw UnimplementedError(
-        'dismissAllNotifications has not been implemented.');
+        'requestDismissKeyguard has not been implemented.');
   }
 }

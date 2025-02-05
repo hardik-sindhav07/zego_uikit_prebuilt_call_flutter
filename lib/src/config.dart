@@ -8,6 +8,7 @@ import 'package:zego_uikit/zego_uikit.dart';
 import 'package:zego_uikit_prebuilt_call/src/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/inner_text.dart';
+import 'deprecated/deprecated.dart';
 
 /// Configuration for initializing the Call
 /// This class is used as the [config] parameter for the constructor of [ZegoUIKitPrebuiltCall].
@@ -43,8 +44,6 @@ class ZegoUIKitPrebuiltCallConfig {
 
   /// Configuration options for voice changer and reverberation effects.
   ZegoCallAudioEffectConfig audioEffect;
-
-  ZegoCallPIPConfig pip;
 
   /// Set advanced engine configuration, Used to enable advanced functions.
   /// For details, please consult ZEGO technical support.
@@ -205,34 +204,41 @@ class ZegoUIKitPrebuiltCallConfig {
     ZegoCallTopMenuBarConfig? topMenuBarConfig,
     ZegoCallBottomMenuBarConfig? bottomMenuBarConfig,
     ZegoCallMemberListConfig? memberListConfig,
-    ZegoCallPIPConfig? pipConfig,
     ZegoCallDurationConfig? durationConfig,
     ZegoCallInRoomChatViewConfig? chatViewConfig,
     ZegoCallHangUpConfirmDialogConfig? hangUpConfirmDialog,
     ZegoCallUserConfig? userConfig,
+    @Deprecated(
+        'use hangUpConfirmDialog?.dialogInfo instead$deprecatedTipsV440')
+    ZegoCallHangUpConfirmDialogInfo? hangUpConfirmDialogInfo,
     ZegoLayout? layout,
     this.foreground,
     this.background,
     this.avatarBuilder,
+    @Deprecated(
+        'use audioVideoView.containerBuilder instead$deprecatedTipsV419')
+    ZegoCallAudioVideoContainerBuilder? audioVideoContainerBuilder,
     ZegoUIKitPrebuiltCallInnerText? translationText,
     ZegoCallAudioEffectConfig? audioEffect,
   })  : video = videoConfig ?? ZegoUIKitVideoConfig.preset360P(),
-        audioVideoView = audioVideoViewConfig ?? ZegoCallAudioVideoViewConfig(),
+        audioVideoView = (audioVideoViewConfig ??
+            ZegoCallAudioVideoViewConfig())
+          ..containerBuilder = audioVideoContainerBuilder,
         topMenuBar = topMenuBarConfig ?? ZegoCallTopMenuBarConfig(),
         bottomMenuBar = bottomMenuBarConfig ?? ZegoCallBottomMenuBarConfig(),
         memberList = memberListConfig ?? ZegoCallMemberListConfig(),
         duration = durationConfig ?? ZegoCallDurationConfig(),
         chatView = chatViewConfig ?? ZegoCallInRoomChatViewConfig(),
         user = userConfig ?? ZegoCallUserConfig(),
-        hangUpConfirmDialog =
-            hangUpConfirmDialog ?? ZegoCallHangUpConfirmDialogConfig(),
+        hangUpConfirmDialog = (hangUpConfirmDialog ??
+            ZegoCallHangUpConfirmDialogConfig())
+          ..info = hangUpConfirmDialogInfo,
         layout = layout ??
             ZegoLayout.pictureInPicture(
               smallViewPosition: ZegoViewPosition.topRight,
             ),
         translationText = translationText ?? ZegoUIKitPrebuiltCallInnerText(),
-        audioEffect = audioEffect ?? ZegoCallAudioEffectConfig(),
-        pip = pipConfig ?? ZegoCallPIPConfig();
+        audioEffect = audioEffect ?? ZegoCallAudioEffectConfig();
 
   @override
   String toString() {
@@ -246,7 +252,6 @@ class ZegoUIKitPrebuiltCallConfig {
         'chatView:$chatView, '
         'user:$user, '
         'layout:$layout, '
-        'pip:$pip, '
         'turnOnCameraWhenJoining:$turnOnCameraWhenJoining, '
         'turnOnMicrophoneWhenJoining:$turnOnMicrophoneWhenJoining, '
         'useSpeakerWhenJoining:$useSpeakerWhenJoining, '
@@ -282,26 +287,6 @@ class ZegoCallAudioVideoViewConfig {
   /// Whether to display the username on the audio/video view.
   /// Set it to false if you don't want to show the username on the audio/video view.
   bool showUserNameOnView;
-
-  /// Is it only displayed audio video view when the camera or microphone is turned on?
-  ///
-  /// true, it will only display if the camera or microphone is turned on
-  /// false, displays regardless of whether it is turned on or off
-  bool showOnlyCameraMicrophoneOpened;
-
-  /// Is it display local user audio video view
-  ///
-  /// set false if you want to hide it
-  bool showLocalUser;
-
-  /// When inviting in calling, the invited user window will appear on the
-  /// invitation side, if you want to hide this view, set it to false.
-  /// you can cancel the invitation for this user in this view.
-  bool showWaitingCallAcceptAudioVideoView;
-
-  /// When inviting in calling, the invited user window will appear on the invitation side,
-  /// and you can customize the foreground at this time.
-  ZegoAudioVideoViewForegroundBuilder? waitingCallAcceptForegroundBuilder;
 
   /// You can customize the foreground of the audio/video view, which refers to the widget positioned on top of the view.
   /// You can return any widget, and we will place it at the top of the audio/video view.
@@ -342,11 +327,7 @@ class ZegoCallAudioVideoViewConfig {
     this.useVideoViewAspectFill = false,
     this.showAvatarInAudioMode = true,
     this.showSoundWavesInAudioMode = true,
-    this.showWaitingCallAcceptAudioVideoView = true,
-    this.showLocalUser = true,
-    this.showOnlyCameraMicrophoneOpened = false,
     this.foregroundBuilder,
-    this.waitingCallAcceptForegroundBuilder,
     this.backgroundBuilder,
     this.containerBuilder,
     this.containerRect,
@@ -585,8 +566,7 @@ class ZegoCallDurationConfig {
   /// ``` dart
   /// ..duration.isVisible = true
   /// ..duration.onDurationUpdate = (Duration duration) {
-  ///   if (duration.inSeconds == 5 * 60) {
-  ///     /// hangup after 5 minutes
+  ///   if (duration.inSeconds >= 5 * 60) {
   ///     callController?.hangUp(context);
   ///   }
   /// }
@@ -918,57 +898,6 @@ class ZegoCallRequiredUserConfig {
         'users:$users, '
         'detectSeconds:$detectSeconds, '
         'detectInDebugMode:$detectInDebugMode, '
-        '}';
-  }
-}
-
-/// pip config
-class ZegoCallPIPConfig {
-  ZegoCallPIPConfig({
-    this.aspectWidth = 9,
-    this.aspectHeight = 16,
-    this.enableWhenBackground = true,
-    ZegoCallPIPAndroidConfig? android,
-  }) : android = android ?? ZegoCallPIPAndroidConfig();
-
-  /// android config
-  ZegoCallPIPAndroidConfig android;
-
-  /// aspect width
-  int aspectWidth;
-
-  /// aspect height
-  int aspectHeight;
-
-  /// android: only available on SDK higher than 31(>=31)
-  /// iOS: not limit
-  bool enableWhenBackground;
-
-  @override
-  String toString() {
-    return 'ZegoCallPIPConfig:{'
-        'android:$android, '
-        'aspectWidth:$aspectWidth, '
-        'aspectHeight:$aspectHeight, '
-        'enableWhenAppBackToDesktop:$enableWhenBackground, '
-        '}';
-  }
-}
-
-/// android pip
-/// only available on SDK higher than 26(>=26)
-class ZegoCallPIPAndroidConfig {
-  ZegoCallPIPAndroidConfig({
-    this.background,
-  });
-
-  /// default is black
-  Widget? background;
-
-  @override
-  String toString() {
-    return 'ZegoCallPIPAndroidConfig:{'
-        'background:$background, '
         '}';
   }
 }

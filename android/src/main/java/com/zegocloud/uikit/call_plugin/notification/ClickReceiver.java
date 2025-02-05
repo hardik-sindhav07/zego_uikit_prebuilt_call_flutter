@@ -12,9 +12,7 @@ import com.zegocloud.uikit.call_plugin.Defines;
 public class ClickReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        int notificationID = intent.getIntExtra(Defines.FLUTTER_PARAM_NOTIFICATION_ID, -1);
-        Log.i("call plugin", "click receiver, Received broadcast " + intent.getAction() + String.format(", notification id: %d", notificationID));
-
+        Log.i("call plugin", "click receiver, Received broadcast " + intent.getAction());
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }

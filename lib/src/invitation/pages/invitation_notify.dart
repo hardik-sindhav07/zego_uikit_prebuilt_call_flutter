@@ -9,7 +9,6 @@ import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
 
 // Project imports:
@@ -104,7 +103,11 @@ class _ZegoCallInvitationNotifyDialogState
                       SizedBox(width: 40.zW),
                     ]
                   : [],
-              ...widget.acceptButtonConfig.visible ? [acceptButton()] : [],
+              ...widget.acceptButtonConfig.visible
+                  ? [
+                      acceptButton(),
+                    ]
+                  : [],
             ],
           ),
     );
@@ -127,7 +130,7 @@ class _ZegoCallInvitationNotifyDialogState
     return SizedBox(
       width: 350.zW,
       child: Text(
-        (ZegoCallInvitationType.videoCall == widget.invitationData.type
+        (ZegoCallType.videoCall == widget.invitationData.type
                 ? (widget.invitationData.invitees.length > 1
                     ? widget.callInvitationConfig.innerText
                         .incomingGroupVideoCallDialogTitle
@@ -178,9 +181,7 @@ class _ZegoCallInvitationNotifyDialogState
         inviterID: widget.invitationData.inviter?.id ?? '',
         targetInvitationID: widget.invitationData.invitationID,
         // customization is not supported
-        data: ZegoCallInvitationRejectRequestProtocol(
-          reason: ZegoCallInvitationProtocolKey.refuseByDecline,
-        ).toJson(),
+        data: '{"reason":"decline"}',
         textStyle: widget.declineButtonConfig.textStyle,
         icon: ButtonIcon(
           icon: widget.declineButtonConfig.icon ??
@@ -192,20 +193,10 @@ class _ZegoCallInvitationNotifyDialogState
         ),
         iconSize: widget.declineButtonConfig.iconSize ?? Size(74.zR, 74.zR),
         buttonSize: widget.declineButtonConfig.size ?? Size(74.zR, 74.zR),
-        onPressed: (ZegoRefuseInvitationButtonResult result) {
+        onPressed: (String code, String message) {
           widget.pageManager.hideInvitationTopSheet();
-          widget.pageManager.onLocalRefuseInvitation(
-            widget.invitationData.invitationID,
-            result.code,
-            result.message,
-          );
+          widget.pageManager.onLocalRefuseInvitation(code, message);
         },
-        networkLoadingConfig:
-            widget.callInvitationConfig.config.networkLoading ??
-                ZegoNetworkLoadingConfig(
-                  enabled: true,
-                  progressColor: Colors.white,
-                ),
       ),
     );
   }
@@ -216,7 +207,6 @@ class _ZegoCallInvitationNotifyDialogState
       child: ZegoAcceptInvitationButton(
         inviterID: widget.invitationData.inviter?.id ?? '',
         targetInvitationID: widget.invitationData.invitationID,
-        customData: ZegoCallInvitationAcceptRequestProtocol().toJson(),
         textStyle: widget.acceptButtonConfig.textStyle,
         icon: ButtonIcon(
           icon: widget.acceptButtonConfig.icon ??
@@ -229,43 +219,33 @@ class _ZegoCallInvitationNotifyDialogState
         ),
         iconSize: widget.acceptButtonConfig.iconSize ?? Size(74.zR, 74.zR),
         buttonSize: widget.acceptButtonConfig.size ?? Size(74.zR, 74.zR),
-        onPressed: (ZegoAcceptInvitationButtonResult result) {
+        onPressed: (String code, String message) {
           widget.pageManager.hideInvitationTopSheet();
-          widget.pageManager.onLocalAcceptInvitation(
-            widget.invitationData.invitationID,
-            result.code,
-            result.message,
-          );
+          widget.pageManager.onLocalAcceptInvitation(code, message);
         },
-        networkLoadingConfig:
-            widget.callInvitationConfig.config.networkLoading ??
-                ZegoNetworkLoadingConfig(
-                  enabled: true,
-                  progressColor: Colors.white,
-                ),
       ),
     );
   }
 
-  String imageURLByInvitationType(ZegoCallInvitationType invitationType) {
+  String imageURLByInvitationType(ZegoCallType invitationType) {
     switch (invitationType) {
-      case ZegoCallInvitationType.voiceCall:
+      case ZegoCallType.voiceCall:
         return InvitationStyleIconUrls.inviteVoice;
-      case ZegoCallInvitationType.videoCall:
+      case ZegoCallType.videoCall:
         return InvitationStyleIconUrls.inviteVideo;
     }
   }
 
   String invitationTypeString(
-      ZegoCallInvitationType invitationType, List<ZegoUIKitUser> invitees) {
+      ZegoCallType invitationType, List<ZegoUIKitUser> invitees) {
     switch (invitationType) {
-      case ZegoCallInvitationType.voiceCall:
+      case ZegoCallType.voiceCall:
         return invitees.length > 1
             ? (widget.callInvitationConfig.innerText
                 .incomingGroupVoiceCallDialogMessage)
             : (widget
                 .callInvitationConfig.innerText.incomingVoiceCallDialogMessage);
-      case ZegoCallInvitationType.videoCall:
+      case ZegoCallType.videoCall:
         return invitees.length > 1
             ? (widget.callInvitationConfig.innerText
                 .incomingGroupVideoCallDialogMessage)

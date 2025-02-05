@@ -1,6 +1,5 @@
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/invitation/config.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/config.defines.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 const deprecatedTipsV4_11_0 = ', '
     'deprecated since 4.11.0, '

@@ -1,276 +1,15 @@
-## 4.16.21
 
-- Update dependency
 
-## 4.16.20
-
-- Bugs
-  - Fix voice calls with no call sound in iOS silent mode
-
-## 4.16.19
-
-- Bugs
-  - Fix screen-sharing outside the app, remote pull-based streaming has no sound
-  
-## 4.16.18
-
-- Features
-  -  When the network is disconnected, invite related buttons to increase the loading effect
-- Update dependency
-
-## 4.16.17
-
-- Bugs
-  - Fix the issue that the sound wave circle does not disappear when turned off the microphone on voice call.
-  - Fix the black screen issue caused by clicking the call button multiple times quickly and frequently.
-  - Fix the issue that  the invitation top pop-up window not closed when both users call each other at the same time.
-  - Fix UI issues for group call.
-  - Increase handling of network interruptions and application kills in invitation.
-- Features
-  - Support playing call dial tone in silent mode
-
-## 4.16.16
-
-- Update dependency
-
-## 4.16.15
-
-- Update dependency
-
-## 4.16.14
-
-- Bugs
-  - Fix the issue of `onOutgoingCallTimeout` event not callback in advanced mode
-
-## 4.16.13
-
-- Bugs
-  - Fix test zim types crash on debug mode
-
-## 4.16.12
- 
-- Bugs
-  - Fix iOS offline call enter failure issue after open **config.inCalling.canInvitingInCalling** in **ZegoUIKitPrebuiltCallInvitationService.init**
-
-
-## 4.16.11
-
-- Add some logs
-
-## 4.16.10
-
-- Bugs
-  - Catch and log crashes in certain scenes
-  
-## 4.16.9
-
-- Bugs
-  - Prevent crashes caused by some permissions not being granted
-  - Fix the issue where the invitation ringtone does not follow the silent mode under Android
-- Update dependency
-
-## 4.16.8
-
-- Bugs
-  - Fix incompatibility with the web of invitations on calling
-  - Fix the issue where the invitation ringtone does not follow the silent mode under iOS
-
-## 4.16.7
-
-- Features
-  - add ZegoCallInvitationPermission.systemAlertWindow option in ZegoCallInvitationConfig.permissions array. If this permission is not specified, the ZegoUIKitPrebuiltCallInvitationService().init() method will not automatically apply for this permission.
-  
-- Bugs
-  - Fix occasional cancel button issue
-
-## 4.16.6
-
-- Bugs
-  - Update the processing of receiving ended call invitations in unstable network environment
-
-## 4.16.5
-## 4.16.4
-
-- Bugs
-  - Fix the occasional crash of pip on some android machines
-  - Fix screen-sharing crash issue on android 14
-
-## 4.16.3
-
-- Features
-  - Add a new parameter **invitationData** to the `event` parameter of `onCallEnd`. If the currently ended call was entered through an invitation, the invitation data will be returned at the same time.
-
-## 4.16.2
-
-- Update dependency
-
-## 4.16.1
-
-- Bugs
-  - hide pip logic in iOS, or an exception will occur
-  - Fix exit the application when you receive an online invitation, and the next offline calls will be automatically canceled in iOS
-
-## 4.16.0
-
-- Features
-  - Support PIP(android only)
-  
-## 4.15.13
-
-- Features
-  - add **customData** in `foregroundBuilder`,`pageBuilder` and `backgroundBuilder` of `ZegoCallInvitationInviterUIConfig的foregroundBuilder`
-
-## 4.15.12
-
-- Update dependency
-
-## 4.15.11
-
-- Bugs
-  - Fix the issue that failed call of **ZegoUIKitPrebuiltCallInvitationService.accept/reject** 
-
-## 4.15.10
-
-- Bugs
-  - Fix the issue of the cancel button appearing after entering a call in normal call scenarios
-
-## 4.15.9
-
-- Bugs
-  -  Fix the issue of black screen when ending the call in some scenarios
-
-
-## 4.15.8
-
-- Update dependency
-
-## 4.15.7
-
-- Update dependency
-
-## 4.15.6
-
-- Bugs
-  - Fix offline call from web failure issue
-
-## 4.15.5
-
-- Features
-  -  Support hide video window of local user by `ZegoUIKitPrebuiltCallConfig.audioVideoView.showLocalUser`
-
-## 4.15.4
-
-- Bugs
-  - Compatible with older version call invitation, change the default value of `ZegoCallInvitationConfig.missedCall.enableDialBack` to false.
-
-## 4.15.3
-
-- Update document
-
-## 4.15.2
-
-- Migrations
-  - rename two variables [migrate changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4152)
-
-## 4.15.1
-
-- Update document
-
-## 4.15.0
-
-- Features
-  - Support online/offline missed call notification and dial back(android only)
-  - Add permission request pop-up box for android systemAlertWindow
-  - Add `showOnlyCameraMicrophoneOpened` in `ZegoUIKitPrebuiltCallConfig.audioVideoView` to control is it only displayed audio video view when the camera or microphone is turned on
-- Bugs
-  - Fix notification not turned off in time after offline call timeout
-  - Fix black screen issue after inviting the user to end the call
-- Migrations
-  - move some Configs `ZegoCallInvitationConfig` to `ZegoCallAndroidNotificationConfig` [migrate changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4150)
-
-## 4.14.3
-
-- Update dependency
-
-## 4.14.2
-
-- Bugs
-  - Fix the issue of offline receive failure caused by android/iOS certificate indexing error
-
-## 4.14.1
-
-- Update dependency
-
-
-## 4.14.0
-
-- Features
-  - Added `ZegoUIKitPrebuiltCallMiniPopScope` to protect the interface from being destroyed when minimized. [Document](https://www.zegocloud.com/docs/uikit/callkit-flutter/calling-config/minimize-call-window)
-  - Added `license` in `ZegoBeautyPluginConfig` to setting license to beauty
-
-## 4.13.1
-
-- Update dependency
-
-## 4.13.0
-
-- Features
-  - Support login by token
-
-## 4.12.11
-
-- Bugs
-  - Fix the issue that there is no pop-up box for offline calls after enabling the foreground service in Android.
-
-## 4.12.10
-
-- Bugs
-  - Fix call-id being modified midway
-
-## 4.12.9
-
-- Bugs
-  - Fix the issue of invitee name loss in invitation-related callbacks
-
-## 4.12.6-4.12.8
-
-- Update documents.
-  
-## 4.12.5
-
-- Bugs
-  - Fix the issue of not entering a call due to offline call timing in IOS
-  
-## 4.12.4
-
-- Bugs
-  - Fix the issue of not entering a call directly when accept the offline call in Android
-
-## 4.12.3
-
-- Bugs
-  - try fix the issue of not entering a call due to offline call timing in IOS
-
-## 4.12.2
-
-- Bugs
-  - Fix crash on normal call
-
-## 4.12.1
-
-- Bugs
-  - Fixing the issue of failed invitations in certain scenarios.
-
-## 4.12.0
-
-- Features
-  - Support inviting users in calling by setting **canInvitingInCalling** to true when `ZegoUIKitPrebuiltCallInvitationService.init`, see [Doc](https://www.zegocloud.com/docs/uikit/callkit-flutter/invitation-config/invitation-in-calling) for effects and steps. ⚠️⚠️⚠️  **If you use this feature, the invitation feature will no longer be compatible with 
-    version before v4.12.0, that is mean, invitations will not be received between each other**.  
-
-  
-## 4.11.4-4.11.8
+## 4.11.6
 
 - Update dependency.
+
+## 4.11.5
+
+- Update dependency.
+
+## 4.11.4
+
 - Bugs
   - Fix namespace error after grade v8.0
   
@@ -290,9 +29,8 @@
 ## 4.11.0
 
 - Features
-  - `showAvatar`, `showCentralName` and `showCallingText` are added in the `inviter` and `invitee` of `ZegoCallInvitationInviterUIConfig`.
-- Migrations
   - Parameters in the `ZegoCallInvitationInviterUIConfig` is placed in `inviter` and `invitee` according to the role; at the same time.💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4110)
+  - `showAvatar`, `showCentralName` and `showCallingText` are added in the `inviter` and `invitee` of `ZegoCallInvitationInviterUIConfig`.
 
 ## 4.10.0
 
@@ -336,6 +74,7 @@
 - Features
   - Configs
     - Support customizing the **display area of the audio video container** through `ZegoUIKitPrebuiltCallConfig.audioVideoView.containerRect`
+    - `ZegoCallAudioVideoContainerBuilder` adds the `ZegoAudioVideoView Function(ZegoUIKitUser) audioVideoViewCreator` parameter to construct the **default audio & video view widget**💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#480)
     - Support hiding the bottom toolbar through `ZegoUIKitPrebuiltCallConfig.bottomMenuBar.isVisible`
   - Controller
     - Add **audioVideo** in `ZegoUIKitPrebuiltCallController()`, which can access the APIs and callbacks related to camera, microphone, and audioOutput
@@ -344,8 +83,6 @@
     - `ZegoUIKitPrebuiltCallEvents.audioVideo` adds the event for device exception status
 - Bugs
   - Fixed the issue where the default call id was missing the user id in the first call of `ZegoSendCallInvitationButton`
-- Migrations
-  - `ZegoCallAudioVideoContainerBuilder` adds the `ZegoAudioVideoView Function(ZegoUIKitUser) audioVideoViewCreator` parameter to construct the **default audio & video view widget**💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#480)
 
 ## 4.7.3
 
@@ -377,7 +114,7 @@
 
 ## 4.5.3
 
-- Update dependency.
+ - update deps.
 
 ## 4.5.2
 
@@ -411,7 +148,6 @@
 
 - Features
   - Support setting hang-up dialog box style by `ZegoUIKitPrebuiltCallConfig.hangUpConfirmDialog`
-- Migrations
   - move API in `ZegoUIKitPrebuiltCallConfig.hangUpConfirmDialogInfo` to `ZegoUIKitPrebuiltCallConfig.hangUpConfirmDialog.info` [migrate changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#440)
 
 ## 4.3.2
@@ -454,22 +190,20 @@
 
 ## 4.2.0
 
-- Features
-  - Support custom invitation UI by [ZegoCallInvitationUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationUIConfig-class.html)
+- Support custom invitation UI by [ZegoCallInvitationUIConfig](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/zego_uikit_prebuilt_call/ZegoCallInvitationUIConfig-class.html)
 
 ## 4.1.10
 
-- Features
-  - Add configs document
-- Migrations
-  - rename some variables. [migrate guide](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4110).
-  - move API in `ZegoUIKitPrebuiltCallController().invitation` to `ZegoUIKitPrebuiltCallInvitationService()` [migrate changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4110)
+- move API in `ZegoUIKitPrebuiltCallController().invitation` to `ZegoUIKitPrebuiltCallInvitationService()` [migrate changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4110)
+- rename some variables. [migrate guide](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#4110).
+
+- Add configs document
 
 ## 4.1.9
 
+- rename some variables. [migrate guide](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#419).
+
 - Update documents
-- Migrations
-  - rename some variables. [migrate guide](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#419).
 
 ## 4.1.8
 
@@ -491,9 +225,11 @@
 
 ## 4.1.4
 
+- > 
+> add **defaultAction** in `onHangUpConfirmation`
+>
+> 💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#414)
 
-- Features
-  - add **defaultAction** in `onHangUpConfirmation` 💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#414)
 - Update dependency.
 
 ## 4.1.3
@@ -510,8 +246,7 @@
 
 ## 4.1.0
 
-- Features
-  - Support for configurable streaming video and automatic adjustment based on traffic control.
+- Support for configurable streaming video and automatic adjustment based on traffic control.
 
 ## 4.0.1
 
@@ -519,16 +254,14 @@
 
 ## 4.0.0
 
+- >
+> The 4.0 version has standardized and optimized the API and Event, simplifying the usage of most APIs.
+>
+> Most of the changes involve modifications to the calling path, such as changing from ZegoUIKitPrebuiltCallController().isMinimizing() to ZegoUIKitPrebuiltCallController().minimize.isMinimizing.
+>
+> 💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#400)
 
-- Features
-  - Support user/room/audioVideo series events
-- Migrations
-  - >
-    >   The 4.0 version has standardized and optimized the API and Event, simplifying the usage of most APIs.
-    >
-    >     Most of the changes involve modifications to the calling path, such as changing from ZegoUIKitPrebuiltCallController().isMinimizing() to ZegoUIKitPrebuiltCallController().minimize.isMinimizing.
-    >
-    >     💥 [breaking changes](https://pub.dev/documentation/zego_uikit_prebuilt_call/latest/topics/Migration_v4.x-topic.html#400)
+- Support user/room/audioVideo series events
 
 ## 3.18.4
 

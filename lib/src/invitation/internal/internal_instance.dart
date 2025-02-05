@@ -19,7 +19,7 @@ class ZegoCallInvitationInternalInstance {
 
   ZegoCallInvitationPageManager? get pageManager {
     assert(_pageManager != null,
-        'pageManager is null, please call ZegoUIKitPrebuiltCallInvitationService().init(...) when user login');
+        'pageManager is null, plugins call ZegoUIKitPrebuiltCallInvitationService().init(...) when user login');
     return _pageManager;
   }
 
@@ -32,7 +32,7 @@ class ZegoCallInvitationInternalInstance {
   }) {
     ZegoLoggerService.logInfo(
       'register, pageManager:$pageManager, callInvitationData:$callInvitationData',
-      tag: 'call-invitation',
+      tag: 'call',
       subTag: 'internal instance',
     );
 
@@ -43,7 +43,7 @@ class ZegoCallInvitationInternalInstance {
   void unregister() {
     ZegoLoggerService.logInfo(
       'unregister',
-      tag: 'call-invitation',
+      tag: 'call',
       subTag: 'internal instance',
     );
 

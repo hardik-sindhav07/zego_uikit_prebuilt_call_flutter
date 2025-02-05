@@ -2,30 +2,28 @@
   - [onError](#onerror)
   - [onHangUpConfirmation](#onhangupconfirmation)
   - [onCallEnd](#oncallend)
-  - [user(ZegoCallUserEvents)](#userzegocalluserevents)
-    - [onEnter](#onenter)
-    - [onLeave](#onleave)
-  - [room(ZegoCallRoomEvents)](#roomzegocallroomevents)
-    - [onStateChanged](#onstatechanged)
-  - [audioVideo(ZegoCallAudioVideoEvents)](#audiovideozegocallaudiovideoevents)
-    - [onCameraStateChanged](#oncamerastatechanged)
-    - [onFrontFacingCameraStateChanged](#onfrontfacingcamerastatechanged)
-    - [onMicrophoneStateChanged](#onmicrophonestatechanged)
-    - [onAudioOutputChanged](#onaudiooutputchanged)
-    - [onLocalCameraExceptionOccurred](#onlocalcameraexceptionoccurred)
-    - [onLocalMicrophoneExceptionOccurred](#onlocalmicrophoneexceptionoccurred)
-    - [onRemoteCameraExceptionOccurred](#onremotecameraexceptionoccurred)
-    - [onRemoteMicrophoneExceptionOccurred](#onremotemicrophoneexceptionoccurred)
+  - [user](#userzegouikitprebuiltcalluserevents)
+     - [onEnter](#onenter)
+     - [onLeave](#onleave)
+  - [room](#roomzegouikitprebuiltcallroomevents)
+     - [onStateChanged](#onstatechanged)
+  - [audioVideo](#audiovideozegouikitprebuiltcallaudiovideoevents)
+     - [onCameraStateChanged](#oncamerastatechanged)
+     - [onFrontFacingCameraStateChanged](#onfrontfacingcamerastatechanged)
+     - [onMicrophoneStateChanged](#onmicrophonestatechanged)
+     - [onAudioOutputChanged](#onaudiooutputchanged)
+     - [onLocalCameraExceptionOccurred](#onlocalcameraexceptionoccurred)
+     - [onLocalMicrophoneExceptionOccurred](#onlocalmicrophoneexceptionoccurred)
+     - [onRemoteCameraExceptionOccurred](#onremotecameraexceptionoccurred)
+     - [onRemoteMicrophoneExceptionOccurred](#onremotemicrophoneexceptionoccurred)
 - [Invitation Events](#invitation-events)
-  - [onError](#onerror-1)
+  - [onError](#onerror-2)
   - [onInvitationUserStateChanged](#oninvitationuserstatechanged)
   - [onIncomingCallDeclineButtonPressed](#onincomingcalldeclinebuttonpressed)
   - [onIncomingCallAcceptButtonPressed](#onincomingcallacceptbuttonpressed)
   - [onIncomingCallReceived](#onincomingcallreceived)
   - [onIncomingCallCanceled](#onincomingcallcanceled)
   - [onIncomingCallTimeout](#onincomingcalltimeout)
-  - [onIncomingMissedCallClicked](#onincomingmissedcallclicked)
-  - [onIncomingMissedCallDialBackFailed](#onincomingmissedcalldialbackfailed)
   - [onOutgoingCallCancelButtonPressed](#onoutgoingcallcancelbuttonpressed)
   - [onOutgoingCallAccepted](#onoutgoingcallaccepted)
   - [onOutgoingCallRejectedCauseBusy](#onoutgoingcallrejectedcausebusy)
@@ -807,7 +805,7 @@ enum ZegoUIKitDeviceExceptionType {
 >  Function(
 >    String callID,
 >    ZegoCallUser caller,
->    ZegoCallInvitationType callType,
+>    ZegoCallType callType,
 >    List<ZegoCallUser> callees,
 >    String customData,
 >  )? onIncomingCallReceived;
@@ -853,8 +851,7 @@ enum ZegoUIKitDeviceExceptionType {
 
 >
 > The **callee** will receive a notification through this callback when the callee doesn't respond to the call invitation after a timeout duration.
-> missed call callback
-> 
+>
 >- function prototype:
 >```dart
 >Function(String callID, ZegoCallUser caller)? onIncomingCallTimeout;
@@ -869,24 +866,6 @@ enum ZegoUIKitDeviceExceptionType {
 >       },
 >   ),
 >);
->```
-
-## onIncomingMissedCallClicked
-
->This callback will be triggered to **callee** when callee click the
->missed call notification
->
->- function prototype:
->```dart
->Function(String callID, ZegoCallUser caller, ZegoCallInvitationType callType, List<ZegoCallUser> callees, String customData, Future<void> Function() defaultAction)? onIncomingMissedCallClicked;
->```
-
-## onIncomingMissedCallDialBackFailed
-
-> missed call dial back failed
->- function prototype:
->```dart
->Function()? onIncomingMissedCallDialBackFailed;
 >```
 
 ## onOutgoingCallCancelButtonPressed

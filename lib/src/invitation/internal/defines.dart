@@ -20,7 +20,6 @@ class ZegoUIKitPrebuiltCallInvitationData {
   ZegoUIKitPrebuiltCallInvitationData({
     required this.appID,
     required this.appSign,
-    required this.token,
     required this.userID,
     required this.userName,
     required this.plugins,
@@ -46,8 +45,6 @@ class ZegoUIKitPrebuiltCallInvitationData {
   /// for Android/iOS
   /// you need to fill in the appSign you obtained from console.zegocloud.com
   final String appSign;
-
-  final String token;
 
   /// local user info
   final String userID;
@@ -78,35 +75,4 @@ class ZegoUIKitPrebuiltCallInvitationData {
 
   /// we need a context object, to push/pop page when receive invitation request
   ContextQuery? contextQuery;
-}
-
-class ZegoCallInvitationLocalParameter {
-  ZegoCallInvitationLocalParameter({
-    this.resourceID,
-    this.notificationMessage,
-    this.notificationTitle,
-    this.timeoutSeconds = 60,
-  });
-
-  final String? resourceID;
-  final String? notificationTitle;
-  final String? notificationMessage;
-  final int timeoutSeconds;
-
-  ZegoCallInvitationLocalParameter.empty({
-    this.resourceID = '',
-    this.notificationTitle = '',
-    this.notificationMessage = '',
-    this.timeoutSeconds = 60,
-  });
-
-  @override
-  String toString() {
-    return 'ZegoCallInvitationLocalParameter:{'
-        'resourceID:$resourceID, '
-        'notificationTitle:$notificationTitle, '
-        'notificationMessage:$notificationMessage, '
-        'timeoutSeconds:$timeoutSeconds, '
-        '}';
-  }
 }

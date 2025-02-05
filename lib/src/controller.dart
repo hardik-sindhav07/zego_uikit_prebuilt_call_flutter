@@ -1,13 +1,11 @@
 // Dart imports:
 import 'dart:async';
-import 'dart:io' show Platform;
 
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
-import 'package:floating/floating.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
@@ -31,19 +29,13 @@ part 'controller/screen_sharing.dart';
 
 part 'controller/minimize.dart';
 
-part 'controller/pip.dart';
-
 part 'controller/permission.dart';
 
 part 'controller/user.dart';
 
-part 'controller/room.dart';
-
 part 'controller/private/audio_video.dart';
 
 part 'controller/private/minimize.dart';
-
-part 'controller/private/pip.dart';
 
 part 'controller/private/user.dart';
 
@@ -66,11 +58,9 @@ class ZegoUIKitPrebuiltCallController
         ZegoCallControllerScreenSharing,
         ZegoCallControllerInvitation,
         ZegoCallControllerMinimizing,
-        ZegoCallControllerPIP,
         ZegoCallControllerAudioVideo,
         ZegoCallControllerUser,
         ZegoCallControllerPermission,
-        ZegoCallControllerRoom,
         ZegoCallControllerPrivate {
   factory ZegoUIKitPrebuiltCallController() => instance;
 
@@ -170,13 +160,10 @@ class ZegoUIKitPrebuiltCallController
     );
     minimize.hide();
 
-    pip.cancelBackground();
     private.uninitByPrebuilt();
     user.private.uninitByPrebuilt();
     audioVideo.private.uninitByPrebuilt();
     minimize.private.uninitByPrebuilt();
-    permission.private.uninitByPrebuilt();
-    pip.private.uninitByPrebuilt();
 
     final result = await ZegoUIKit().leaveRoom().then((result) {
       ZegoLoggerService.logInfo(
@@ -193,16 +180,11 @@ class ZegoUIKitPrebuiltCallController
 
     ZegoCallKitBackgroundService().setWaitCallPageDisposeFlag(false);
 
-    await ZegoUIKitPrebuiltCallInvitationService().private.clearInvitation();
-
     final endEvent = ZegoCallEndEvent(
       callID: ZegoUIKit().getRoom().id,
       reason: reason,
       isFromMinimizing:
           ZegoCallMiniOverlayPageState.minimizing == minimize.state,
-      invitationData: ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .currentCallInvitationData,
     );
     defaultAction() {
       private.defaultEndEvent(endEvent, context);
@@ -215,7 +197,7 @@ class ZegoUIKitPrebuiltCallController
     }
 
     ZegoLoggerService.logInfo(
-      'hang up, finished',
+      'hang up, finished, test:${private.events}',
       tag: 'call',
       subTag: 'controller',
     );
@@ -225,9 +207,9 @@ class ZegoUIKitPrebuiltCallController
 
   ZegoUIKitPrebuiltCallController._internal() {
     ZegoLoggerService.logInfo(
-      'create',
+      'ZegoUIKitPrebuiltCallController create',
       tag: 'call',
-      subTag: 'controller(${identityHashCode(this)})',
+      subTag: 'call controller(${identityHashCode(this)})',
     );
   }
 

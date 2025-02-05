@@ -1,11 +1,10 @@
+// Dart imports:
+
 // Flutter imports:
 import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:zego_uikit/zego_uikit.dart';
-
-// Project imports:
-import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 
 /// @nodoc
 class ZegoCallAudioVideoForeground extends StatelessWidget {
@@ -30,7 +29,6 @@ class ZegoCallAudioVideoForeground extends StatelessWidget {
     if (user == null) {
       return Container(color: Colors.transparent);
     }
-
     return LayoutBuilder(builder: (context, constraints) {
       return Container(
         padding: const EdgeInsets.all(5),
@@ -57,7 +55,7 @@ class ZegoCallAudioVideoForeground extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
+            )
           ],
         ),
       );
@@ -97,76 +95,5 @@ class ZegoCallAudioVideoForeground extends StatelessWidget {
     }
 
     return ZegoCameraStateIcon(targetUser: user);
-  }
-}
-
-/// @nodoc
-class ZegoWaitingCallAcceptAudioVideoForeground extends StatelessWidget {
-  final Size size;
-  final ZegoUIKitUser? user;
-  final String invitationID;
-  final String? cancelData;
-  final ZegoCallInvitationInnerText invitationInnerText;
-
-  const ZegoWaitingCallAcceptAudioVideoForeground({
-    Key? key,
-    this.cancelData,
-    this.user,
-    required this.invitationID,
-    required this.size,
-    required this.invitationInnerText,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Container(
-        padding: const EdgeInsets.all(5),
-        child: Stack(
-          children: [
-            const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                backgroundColor: Colors.grey,
-                color: Colors.grey,
-              ),
-            ),
-            Positioned(
-              bottom: 100.zR,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: ZegoTextIconButton(
-                  text: invitationInnerText.outgoingCallPageACancelButton,
-                  textStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15.zR,
-                  ),
-                  iconTextSpacing: 5.zR,
-                  buttonSize: Size(120.zR, 120.zR),
-                  iconSize: Size(60.zR, 60.zR),
-                  icon: ButtonIcon(
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: Colors.red,
-                  ),
-                  onPressed: () async {
-                    await ZegoUIKit()
-                        .getSignalingPlugin()
-                        .cancelAdvanceInvitation(
-                      invitees: [user?.id ?? ''],
-                      data: cancelData ?? '',
-                      invitationID: invitationID,
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
   }
 }

@@ -33,7 +33,7 @@ Future<void> setPreferenceString(
 
   ZegoLoggerService.logInfo(
     'setPreferenceString, key:$key, value:$value.',
-    tag: 'call-invitation',
+    tag: 'call',
     subTag: 'call invitation service',
   );
 
@@ -57,7 +57,7 @@ Future<String> getPreferenceString(
 Future<void> removePreferenceValue(String key) async {
   ZegoLoggerService.logInfo(
     'removePreferenceValue, key:$key.',
-    tag: 'call-invitation',
+    tag: 'call',
     subTag: 'call invitation service',
   );
 

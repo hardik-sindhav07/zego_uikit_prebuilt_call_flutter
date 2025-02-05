@@ -21,7 +21,6 @@ class ZegoCallingInviteeView extends StatelessWidget {
     required this.inviter,
     required this.invitees,
     required this.invitationType,
-    required this.customData,
     required this.declineButtonConfig,
     required this.acceptButtonConfig,
     this.foregroundBuilder,
@@ -35,8 +34,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
-  final ZegoCallInvitationType invitationType;
-  final String customData;
+  final ZegoCallType invitationType;
   final ZegoAvatarBuilder? avatarBuilder;
 
   final ZegoCallingForegroundBuilder? foregroundBuilder;
@@ -65,7 +63,6 @@ class ZegoCallingInviteeView extends StatelessWidget {
                       inviter: inviter,
                       invitees: invitees,
                       callType: invitationType,
-                      customData: customData,
                     ),
                   ) ??
                   backgroundImage();
@@ -79,7 +76,7 @@ class ZegoCallingInviteeView extends StatelessWidget {
   }
 
   Widget surface(BuildContext context) {
-    final isVideo = ZegoCallInvitationType.videoCall == invitationType;
+    final isVideo = ZegoCallType.videoCall == invitationType;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -137,7 +134,6 @@ class ZegoCallingInviteeView extends StatelessWidget {
           invitationType: invitationType,
           declineButtonConfig: declineButtonConfig,
           acceptButtonConfig: acceptButtonConfig,
-          networkLoadingConfig: callInvitationData.config.networkLoading,
         ),
         SizedBox(height: 105.zR),
       ],
@@ -153,7 +149,6 @@ class ZegoCallingInviteeView extends StatelessWidget {
               inviter: inviter,
               invitees: invitees,
               callType: invitationType,
-              customData: customData,
             ),
           ) ??
           Container();

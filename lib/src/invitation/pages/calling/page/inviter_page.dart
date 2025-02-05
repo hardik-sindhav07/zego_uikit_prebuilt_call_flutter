@@ -24,7 +24,6 @@ class ZegoCallingInviterView extends StatelessWidget {
     required this.inviter,
     required this.invitees,
     required this.invitationType,
-    required this.customData,
     this.avatarBuilder,
     this.foregroundBuilder,
     this.backgroundBuilder,
@@ -35,8 +34,7 @@ class ZegoCallingInviterView extends StatelessWidget {
 
   final ZegoUIKitUser inviter;
   final List<ZegoUIKitUser> invitees;
-  final ZegoCallInvitationType invitationType;
-  final String customData;
+  final ZegoCallType invitationType;
   final ZegoAvatarBuilder? avatarBuilder;
   final ZegoCallingForegroundBuilder? foregroundBuilder;
   final ZegoCallingBackgroundBuilder? backgroundBuilder;
@@ -64,7 +62,7 @@ class ZegoCallingInviterView extends StatelessWidget {
   }
 
   Widget backgroundView(BuildContext context) {
-    if (ZegoCallInvitationType.videoCall == invitationType) {
+    if (ZegoCallType.videoCall == invitationType) {
       return ZegoAudioVideoView(user: inviter);
     }
 
@@ -76,7 +74,6 @@ class ZegoCallingInviterView extends StatelessWidget {
               inviter: inviter,
               invitees: invitees,
               callType: invitationType,
-              customData: customData,
             ),
           ) ??
           backgroundImage();
@@ -84,7 +81,7 @@ class ZegoCallingInviterView extends StatelessWidget {
   }
 
   Widget surface(BuildContext context) {
-    final isVideo = ZegoCallInvitationType.videoCall == invitationType;
+    final isVideo = ZegoCallType.videoCall == invitationType;
 
     final firstInvitee =
         invitees.isNotEmpty ? invitees.first : ZegoUIKitUser.empty();
@@ -137,7 +134,6 @@ class ZegoCallingInviterView extends StatelessWidget {
         const Expanded(child: SizedBox()),
         ZegoInviterCallingBottomToolBar(
           pageManager: pageManager,
-          networkLoadingConfig: callInvitationData.config.networkLoading,
           cancelButtonConfig: config.cancelButton,
           invitees: invitees,
         ),
@@ -155,7 +151,6 @@ class ZegoCallingInviterView extends StatelessWidget {
               inviter: inviter,
               invitees: invitees,
               callType: invitationType,
-              customData: customData,
             ),
           ) ??
           Container();

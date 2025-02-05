@@ -58,7 +58,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
           ZegoLoggerService.logInfo(
             'onStateChanged, '
             'currentState:$currentState, ',
-            tag: 'call-invitation',
+            tag: 'call',
             subTag: 'calling page',
           );
         });
@@ -98,7 +98,6 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                     inviter: widget.inviter,
                     invitees: widget.invitees,
                     callType: widget.pageManager.invitationData.type,
-                    customData: widget.pageManager.invitationData.customData,
                   ),
                 ) ??
                 ZegoCallingInviterView(
@@ -107,7 +106,6 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                   inviter: widget.inviter,
                   invitees: widget.invitees,
                   invitationType: widget.pageManager.invitationData.type,
-                  customData: widget.pageManager.invitationData.customData,
                   avatarBuilder: widget.callInvitationData
                       .requireConfig(widget.pageManager.invitationData)
                       .avatarBuilder,
@@ -122,7 +120,6 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                     inviter: widget.inviter,
                     invitees: widget.invitees,
                     callType: widget.pageManager.invitationData.type,
-                    customData: widget.pageManager.invitationData.customData,
                   ),
                 ) ??
                 ZegoCallingInviteeView(
@@ -131,7 +128,6 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
                   inviter: widget.inviter,
                   invitees: widget.invitees,
                   invitationType: widget.pageManager.invitationData.type,
-                  customData: widget.pageManager.invitationData.customData,
                   avatarBuilder: widget.callInvitationData
                       .requireConfig(widget.pageManager.invitationData)
                       .avatarBuilder,
@@ -153,12 +149,9 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
         break;
     }
 
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (bool didPop) async {
-        if (didPop) {
-          return;
-        }
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
       },
       child: view,
     );
@@ -169,7 +162,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
       'create prebuilt call page, '
       'is group call:${widget.pageManager.isGroupCall}, '
       'invitationData:${widget.pageManager.invitationData}',
-      tag: 'call-invitation',
+      tag: 'call',
       subTag: 'calling page',
     );
 
@@ -183,7 +176,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
 
     ZegoLoggerService.logInfo(
       'create prebuilt call page',
-      tag: 'call-invitation',
+      tag: 'call',
       subTag: 'calling page',
     );
     if (!widget.pageManager.isGroupCall) {
@@ -198,13 +191,13 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
           ];
           ZegoLoggerService.logInfo(
             'requiredUsers.users set as (${callConfig.user.requiredUsers.users})',
-            tag: 'call-invitation',
+            tag: 'call',
             subTag: 'calling page',
           );
         } else {
           ZegoLoggerService.logInfo(
             'config.user.requiredUsers.users had value(${callConfig.user.requiredUsers.users}) before, would not replace it',
-            tag: 'call-invitation',
+            tag: 'call',
             subTag: 'calling page',
           );
         }
@@ -214,7 +207,6 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
     final prebuiltCall = ZegoUIKitPrebuiltCall(
       appID: widget.callInvitationData.appID,
       appSign: widget.callInvitationData.appSign,
-      token: widget.callInvitationData.token,
       callID: widget.pageManager.invitationData.callID,
       userID: widget.callInvitationData.userID,
       userName: widget.callInvitationData.userName,

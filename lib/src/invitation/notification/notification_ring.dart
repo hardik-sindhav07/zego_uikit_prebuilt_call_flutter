@@ -3,9 +3,7 @@ import 'dart:async';
 
 // Package imports:
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-import 'package:flutter_volume_controller/flutter_volume_controller.dart';
-import 'package:vibration/vibration.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Flutter imports:
@@ -13,7 +11,6 @@ import 'package:zego_uikit/zego_uikit.dart';
 /// @nodoc
 class ZegoRingtone {
   bool isRingTimerRunning = false;
-  bool isRingtoneRunning = false;
   var audioPlayer = AudioPlayer();
 
   bool isVibrate = true;
@@ -30,7 +27,7 @@ class ZegoRingtone {
   }) {
     ZegoLoggerService.logInfo(
       'init: prefix:$prefix, source path:$sourcePath',
-      tag: 'call-invitation',
+      tag: 'call',
       subTag: 'ringtone',
     );
 
@@ -38,109 +35,74 @@ class ZegoRingtone {
     this.sourcePath = sourcePath;
     this.isVibrate = isVibrate;
 
-    final audioContext = AudioContext(
+    const audioContext = AudioContext(
       iOS: AudioContextIOS(
-        /// not silenced
-        category: AVAudioSessionCategory.playback,
+        category: AVAudioSessionCategory.playAndRecord,
+        options: [
+          AVAudioSessionOptions.defaultToSpeaker,
+          AVAudioSessionOptions.allowBluetooth,
+          AVAudioSessionOptions.allowBluetoothA2DP,
+          AVAudioSessionOptions.mixWithOthers,
+        ],
       ),
-      android: const AudioContextAndroid(
+      android: AudioContextAndroid(
         isSpeakerphoneOn: true,
         stayAwake: true,
-        contentType: AndroidContentType.unknown,
-        usageType: AndroidUsageType.notificationRingtone,
+        contentType: AndroidContentType.music,
+        usageType: AndroidUsageType.media,
         audioFocus: AndroidAudioFocus.gain,
       ),
     );
     AudioPlayer.global.setAudioContext(audioContext);
   }
 
-  bool isZero(double val) {
-    return val.abs() < 1e-6;
-  }
-
-  Future<void> startRing({
-    required bool testPlayRingtone,
-  }) async {
+  Future<void> startRing() async {
     if (isRingTimerRunning) {
       ZegoLoggerService.logInfo(
         'ring is running',
-        tag: 'call-invitation',
+        tag: 'call',
         subTag: 'ringtone',
       );
 
       return;
     }
 
-    bool isPlayByRingtone = false;
-    if (testPlayRingtone) {
-      /// don't play on callee if silent mode
-      final volume = await FlutterVolumeController.getVolume(
-            stream: AudioStream.music,
-          ) ??
-          1.0;
-      isPlayByRingtone = isZero(volume);
-    }
-
-    isRingTimerRunning = true;
-
     ZegoLoggerService.logInfo(
-      'start ring, '
-      'prefix:$prefix, '
-      'source path:$sourcePath, '
-      'isPlayByRingtone:$isPlayByRingtone, '
-      '',
-      tag: 'call-invitation',
+      'start ring, source path:$sourcePath',
+      tag: 'call',
       subTag: 'ringtone',
     );
+
+    isRingTimerRunning = true;
 
     cachePrefix = AudioCache.instance.prefix;
     AudioCache.instance.prefix = prefix;
 
-    if (isPlayByRingtone) {
-      isRingtoneRunning = true;
-      FlutterRingtonePlayer().play(
-        volume: 0.3,
-        fromAsset: '$prefix$sourcePath',
-        looping: true,
-      );
-    } else {
-      audioPlayer.setReleaseMode(ReleaseMode.loop);
-      try {
-        await audioPlayer.play(AssetSource(sourcePath)).then((value) {
-          ZegoLoggerService.logInfo(
-            'audioPlayer play done',
-            tag: 'call-invitation',
-            subTag: 'ringtone',
-          );
-        });
-      } catch (e) {
+    audioPlayer.setReleaseMode(ReleaseMode.loop);
+    try {
+      await audioPlayer.play(AssetSource(sourcePath)).then((value) {
         ZegoLoggerService.logInfo(
-          'audioPlayer play error:$e',
-          tag: 'call-invitation',
+          'audioPlayer play done',
+          tag: 'call',
           subTag: 'ringtone',
         );
-      }
-    }
-
-    if (isVibrate) {
-      Vibration.hasVibrator().then((hasVibrator) {
-        if (hasVibrator ?? false) {
-          Vibration.vibrate();
-        } else {
-          ZegoLoggerService.logWarn(
-            'has not vibrate capabilities',
-            tag: 'call-invitation',
-            subTag: 'ringtone',
-          );
-        }
       });
+    } catch (e) {
+      ZegoLoggerService.logInfo(
+        'audioPlayer play error:$e',
+        tag: 'call',
+        subTag: 'ringtone',
+      );
+    }
+    if (isVibrate) {
+      Vibrate.vibrate();
     }
 
     Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
       if (!isRingTimerRunning) {
         ZegoLoggerService.logInfo(
           'ring timer ended',
-          tag: 'call-invitation',
+          tag: 'call',
           subTag: 'ringtone',
         );
 
@@ -148,14 +110,14 @@ class ZegoRingtone {
           audioPlayer.stop().then((value) {
             ZegoLoggerService.logInfo(
               'audioPlayer stop done',
-              tag: 'call-invitation',
+              tag: 'call',
               subTag: 'ringtone',
             );
           });
         } catch (e) {
           ZegoLoggerService.logInfo(
             'audioPlayer stop error:$e',
-            tag: 'call-invitation',
+            tag: 'call',
             subTag: 'ringtone',
           );
         }
@@ -163,17 +125,7 @@ class ZegoRingtone {
         timer.cancel();
       } else {
         if (isVibrate) {
-          Vibration.hasVibrator().then((hasVibrator) {
-            if (hasVibrator ?? false) {
-              Vibration.vibrate();
-            } else {
-              ZegoLoggerService.logWarn(
-                'has not vibrate capabilities',
-                tag: 'call-invitation',
-                subTag: 'ringtone',
-              );
-            }
-          });
+          Vibrate.vibrate();
         }
       }
     });
@@ -182,7 +134,7 @@ class ZegoRingtone {
   Future<void> stopRing() async {
     ZegoLoggerService.logInfo(
       'stop ring',
-      tag: 'call-invitation',
+      tag: 'call',
       subTag: 'ringtone',
     );
 
@@ -192,25 +144,18 @@ class ZegoRingtone {
 
     isRingTimerRunning = false;
 
-    if (isRingtoneRunning) {
-      isRingtoneRunning = false;
-
-      FlutterRingtonePlayer().stop();
-      // await ZegoCallPluginPlatform.instance.stopRingtone();
-    }
-
     try {
       await audioPlayer.stop().then((value) {
         ZegoLoggerService.logInfo(
           'audioPlayer stop done',
-          tag: 'call-invitation',
+          tag: 'call',
           subTag: 'ringtone',
         );
       });
     } catch (e) {
       ZegoLoggerService.logInfo(
         'audioPlayer stop error:$e',
-        tag: 'call-invitation',
+        tag: 'call',
         subTag: 'ringtone',
       );
     }

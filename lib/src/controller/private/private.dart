@@ -78,11 +78,10 @@ class ZegoCallControllerPrivateImpl {
         CupertinoDialogAction(
           child: Text(
             dialogInfo.cancelButtonName,
-            style: _prebuiltConfig?.hangUpConfirmDialog.actionTextStyle ??
-                TextStyle(fontSize: 26.zR, color: const Color(0xff0055FF)),
+            style: TextStyle(fontSize: 26.zR, color: const Color(0xff0055FF)),
           ),
           onPressed: () {
-            //  pop this confirm dialog
+            //  pop this dialog
             try {
               Navigator.of(
                 context,
@@ -102,11 +101,10 @@ class ZegoCallControllerPrivateImpl {
         CupertinoDialogAction(
           child: Text(
             dialogInfo.confirmButtonName,
-            style: _prebuiltConfig?.hangUpConfirmDialog.actionTextStyle ??
-                TextStyle(fontSize: 26.zR, color: Colors.white),
+            style: TextStyle(fontSize: 26.zR, color: Colors.white),
           ),
           onPressed: () {
-            //  pop this confirm dialog
+            //  pop this dialog
             try {
               Navigator.of(
                 context,
@@ -144,8 +142,6 @@ class ZegoCallControllerPrivateImpl {
       tag: 'call',
       subTag: 'controller.p',
     );
-
-    ZegoUIKitPrebuiltCallInvitationService().private.inCallPage = false;
 
     if (ZegoCallMiniOverlayPageState.idle !=
         ZegoCallMiniOverlayMachine().state()) {

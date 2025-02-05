@@ -8,17 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:zego_uikit/zego_uikit.dart';
 
 // Project imports:
-import 'package:zego_uikit_prebuilt_call/src/internal/reporter.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/inner_text.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/assets.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/defines.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/internal_instance.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/internal/notification.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/internal/protocols.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/calling/machine.dart';
 import 'package:zego_uikit_prebuilt_call/src/invitation/pages/page_manager.dart';
-import 'package:zego_uikit_prebuilt_call/src/invitation/service.dart';
 import 'package:zego_uikit_prebuilt_call/src/minimizing/overlay_machine.dart';
 
 /// This button is used to send a call invitation to one or more specified users.
@@ -56,7 +53,6 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
     this.unclickableTextColor = Colors.black,
     this.clickableBackgroundColor = Colors.transparent,
     this.unclickableBackgroundColor = Colors.transparent,
-    this.networkLoadingConfig,
   }) : super(key: key);
 
   /// The list of invitees to send the call invitation to.
@@ -99,7 +95,6 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
   /// The icon widget for the button.
   final ButtonIcon? icon;
 
-  /// is icon visible or not
   final bool iconVisible;
 
   /// The size of the icon.
@@ -116,9 +111,6 @@ class ZegoSendCallInvitationButton extends StatefulWidget {
 
   /// Determines whether the layout is vertical or horizontal.
   final bool verticalLayout;
-
-  /// network loading
-  final ZegoNetworkLoadingConfig? networkLoadingConfig;
 
   /// padding of button
   final EdgeInsetsGeometry? margin;
@@ -149,7 +141,7 @@ class _ZegoSendCallInvitationButtonState
   bool requesting = false;
   ValueNotifier<String> callIDNotifier = ValueNotifier<String>('');
 
-  StreamSubscription<dynamic>? localUserJoinedSubscription;
+  StreamSubscription<dynamic>? localUserJoinedSubscriptiong;
 
   ZegoCallInvitationPageManager? get pageManager =>
       ZegoCallInvitationInternalInstance.instance.pageManager;
@@ -164,7 +156,7 @@ class _ZegoSendCallInvitationButtonState
     super.initState();
 
     if (ZegoUIKit().getLocalUser().id.isEmpty) {
-      localUserJoinedSubscription =
+      localUserJoinedSubscriptiong =
           ZegoUIKit().getUserJoinStream().listen(onUserJoined);
     } else {
       updateCallID();
@@ -175,7 +167,7 @@ class _ZegoSendCallInvitationButtonState
   void dispose() {
     super.dispose();
 
-    localUserJoinedSubscription?.cancel();
+    localUserJoinedSubscriptiong?.cancel();
   }
 
   @override
@@ -191,26 +183,17 @@ class _ZegoSendCallInvitationButtonState
   void updateCallID() {
     callIDNotifier.value = widget.callID ??
         'call_${ZegoUIKit().getLocalUser().id}_${DateTime.now().millisecondsSinceEpoch}';
-
-    if ((widget.callID?.isNotEmpty ?? false) &&
-        callIDNotifier.value != widget.callID) {
-      ZegoLoggerService.logWarn(
-        'callID(${widget.callID}) is not valid, replace by ${callIDNotifier.value}',
-        tag: 'call-invitation',
-        subTag: 'components, send call button',
-      );
-    }
+    ZegoLoggerService.logInfo(
+      'update call id, ${callIDNotifier.value}',
+      tag: 'call',
+      subTag: 'start call button',
+    );
   }
 
   Widget button() {
     return ZegoStartInvitationButton(
-      isAdvancedMode: ZegoUIKitPrebuiltCallInvitationService()
-          .private
-          .isAdvanceInvitationMode,
       invitationType: ZegoCallTypeExtension(
-        widget.isVideoCall
-            ? ZegoCallInvitationType.videoCall
-            : ZegoCallInvitationType.voiceCall,
+        widget.isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
       ).value,
       invitees: widget.invitees.map((user) {
         return user.id;
@@ -218,31 +201,36 @@ class _ZegoSendCallInvitationButtonState
       timeoutSeconds: widget.timeoutSeconds,
       data: ZegoCallInvitationSendRequestProtocol(
         callID: callIDNotifier.value,
-        inviterName: ZegoUIKit().getLocalUser().name,
         invitees: List.from(widget.invitees),
         timeout: widget.timeoutSeconds,
         customData: widget.customData,
       ).toJson(),
       notificationConfig: ZegoNotificationConfig(
-        resourceID: widget.resourceID ?? '',
-        title: getNotificationTitle(
-          defaultTitle: widget.notificationTitle,
-          callees:
-              widget.invitees.map((e) => ZegoCallUser(e.id, e.name)).toList(),
-          isVideoCall: widget.isVideoCall,
-          innerText: innerText,
-        ),
-        message: getNotificationMessage(
-          defaultMessage: widget.notificationMessage,
-          callees:
-              widget.invitees.map((e) => ZegoCallUser(e.id, e.name)).toList(),
-          isVideoCall: widget.isVideoCall,
-          innerText: innerText,
-        ),
-        voIPConfig: ZegoNotificationVoIPConfig(
-          iOSVoIPHasVideo: widget.isVideoCall,
-        ),
-      ),
+          resourceID: widget.resourceID ?? '',
+          title: widget.notificationTitle ??
+              (widget.isVideoCall
+                      ? ((widget.invitees.length > 1
+                              ? innerText?.incomingGroupVideoCallDialogTitle
+                              : innerText?.incomingVideoCallDialogTitle) ??
+                          param_1)
+                      : ((widget.invitees.length > 1
+                              ? innerText?.incomingGroupVoiceCallDialogTitle
+                              : innerText?.incomingVoiceCallDialogTitle) ??
+                          param_1))
+                  .replaceFirst(param_1, ZegoUIKit().getLocalUser().name),
+          message: widget.notificationMessage ??
+              (widget.isVideoCall
+                  ? ((widget.invitees.length > 1
+                          ? innerText?.incomingGroupVideoCallDialogMessage
+                          : innerText?.incomingVideoCallDialogMessage) ??
+                      'Incoming video call...')
+                  : ((widget.invitees.length > 1
+                          ? innerText?.incomingGroupVoiceCallDialogMessage
+                          : innerText?.incomingVoiceCallDialogMessage) ??
+                      'Incoming voice call...')),
+          voIPConfig: ZegoNotificationVoIPConfig(
+            iOSVoIPHasVideo: widget.isVideoCall,
+          )),
       icon: widget.iconVisible
           ? (widget.icon ??
               ButtonIcon(
@@ -266,50 +254,35 @@ class _ZegoSendCallInvitationButtonState
       unclickableTextColor: widget.unclickableTextColor,
       clickableBackgroundColor: widget.clickableBackgroundColor,
       unclickableBackgroundColor: widget.unclickableBackgroundColor,
-      networkLoadingConfig: widget.networkLoadingConfig ??
-          ZegoNetworkLoadingConfig(enabled: true),
     );
   }
 
   Future<bool> onWillPressed() async {
     if (ZegoSignalingPluginConnectionState.connected !=
         ZegoUIKit().getSignalingPlugin().getConnectionState()) {
-      String errorTips = 'network state:${ZegoUIKit().getNetworkState()}, '
-          'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}, '
-          'ZegoUIKitPrebuiltCallInvitationService is init: '
-          '${ZegoUIKitPrebuiltCallInvitationService().isInit}, ';
-      if (!ZegoUIKitPrebuiltCallInvitationService().isInit) {
-        errorTips =
-            'please call ZegoUIKitPrebuiltCallInvitationService.init with ZegoUIKitSignalingPlugin, $errorTips';
-      }
-
-      if (ZegoUIKitNetworkState.online != ZegoUIKit().getNetworkState()) {
-        errorTips = 'please check device network state, $errorTips';
-      }
-
       ZegoLoggerService.logError(
-        errorTips,
-        tag: 'call-invitation',
-        subTag: 'components, send call button',
+        'signaling is not connected:${ZegoUIKit().getSignalingPlugin().getConnectionState()}, '
+        'please call ZegoUIKitPrebuiltCallInvitationService.init with ZegoUIKitSignalingPlugin first',
+        tag: 'call',
+        subTag: 'start call button',
       );
-
       return false;
     }
 
     if (requesting) {
-      ZegoLoggerService.logError(
+      ZegoLoggerService.logInfo(
         'still in request',
-        tag: 'call-invitation',
-        subTag: 'components, send call button',
+        tag: 'call',
+        subTag: 'start call button',
       );
       return false;
     }
 
     if (ZegoCallMiniOverlayMachine().isMinimizing) {
-      ZegoLoggerService.logError(
-        'is in minimizing now',
-        tag: 'call-invitation',
-        subTag: 'components, send call button',
+      ZegoLoggerService.logInfo(
+        'still in minimizing',
+        tag: 'call',
+        subTag: 'start call button',
       );
       return false;
     }
@@ -318,20 +291,20 @@ class _ZegoSendCallInvitationButtonState
         pageManager?.callingMachine?.machine.current?.identifier ??
             CallingState.kIdle;
     if (CallingState.kIdle != currentState) {
-      ZegoLoggerService.logError(
-        'is in calling, $currentState',
-        tag: 'call-invitation',
-        subTag: 'components, send call button',
+      ZegoLoggerService.logInfo(
+        'still in calling, $currentState',
+        tag: 'call',
+        subTag: 'start call button',
       );
       return false;
     }
 
     final canRequest = await widget.onWillPressed?.call() ?? true;
     if (!canRequest) {
-      ZegoLoggerService.logWarn(
+      ZegoLoggerService.logInfo(
         'onWillPressed stop click process',
-        tag: 'call-invitation',
-        subTag: 'components, send call button',
+        tag: 'call',
+        subTag: 'start call button',
       );
 
       return false;
@@ -339,56 +312,41 @@ class _ZegoSendCallInvitationButtonState
 
     requesting = true;
     ZegoLoggerService.logInfo(
-      'start request, '
-      'isAdvanceInvitationMode:${ZegoUIKitPrebuiltCallInvitationService().private.isAdvanceInvitationMode}, ',
-      tag: 'call-invitation',
-      subTag: 'components, send call button',
+      'start request',
+      tag: 'call',
+      subTag: 'start call button',
     );
-
-    ZegoUIKitPrebuiltCallInvitationService().private.updateLocalInvitingUsers(
-          widget.invitees.map((e) => ZegoCallUser.fromUIKit(e)).toList(),
-        );
 
     return true;
   }
 
-  void onPressed(ZegoStartInvitationButtonResult result) {
+  void onPressed(
+    String code,
+    String message,
+    String invitationID,
+    List<String> errorInvitees,
+  ) {
     ZegoLoggerService.logInfo(
-      'pressed, result:$result',
-      tag: 'call-invitation',
-      subTag: 'components, send call button',
-    );
-
-    ZegoUIKit().reporter().report(
-      event: ZegoCallReporter.eventSendInvitation,
-      params: {
-        ZegoUIKitSignalingReporter.eventKeyInvitationID: result.invitationID,
-        ZegoCallReporter.eventKeyInvitationSource:
-            ZegoCallReporter.eventKeyInvitationSourceButton,
-      },
+      'start call button pressed, code:$code, message:$message, '
+      'invitation id:$invitationID, error invitees:$errorInvitees',
+      tag: 'call',
+      subTag: 'start call button',
     );
 
     pageManager?.onLocalSendInvitation(
       callID: callIDNotifier.value,
       invitees: List.from(widget.invitees),
-      invitationType: widget.isVideoCall
-          ? ZegoCallInvitationType.videoCall
-          : ZegoCallInvitationType.voiceCall,
+      invitationType:
+          widget.isVideoCall ? ZegoCallType.videoCall : ZegoCallType.voiceCall,
       customData: widget.customData,
-      code: result.code,
-      message: result.message,
-      invitationID: result.invitationID,
-      errorInvitees: result.errorInvitees,
-      localConfig: ZegoCallInvitationLocalParameter(
-        resourceID: widget.resourceID,
-        notificationTitle: widget.notificationTitle,
-        notificationMessage: widget.notificationMessage,
-        timeoutSeconds: widget.timeoutSeconds,
-      ),
+      code: code,
+      message: message,
+      invitationID: invitationID,
+      errorInvitees: errorInvitees,
     );
 
     if (widget.onPressed != null) {
-      widget.onPressed!(result.code, result.message, result.errorInvitees);
+      widget.onPressed!(code, message, errorInvitees);
     }
 
     updateCallID();
@@ -396,9 +354,9 @@ class _ZegoSendCallInvitationButtonState
     requesting = false;
 
     ZegoLoggerService.logInfo(
-      'pressed, finish request',
-      tag: 'call-invitation',
-      subTag: 'components, send call button',
+      'start call button pressed, finish request',
+      tag: 'call',
+      subTag: 'start call button',
     );
   }
 
@@ -416,7 +374,7 @@ class _ZegoSendCallInvitationButtonState
     }
 
     /// local user joined
-    localUserJoinedSubscription?.cancel();
+    localUserJoinedSubscriptiong?.cancel();
     updateCallID();
   }
 }
