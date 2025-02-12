@@ -23,6 +23,7 @@ class ZegoCallMinimizeData {
     required this.userID,
     required this.userName,
     required this.isCalling,
+    required this.callWidget,
     required this.config,
     required this.events,
     required this.isPrebuiltFromMinimizing,
@@ -34,6 +35,7 @@ class ZegoCallMinimizeData {
   /// you need to fill in the appID you obtained from console.zegocloud.com
   final int appID;
 
+  final Widget callWidget;
   /// You can customize the callID arbitrarily,
   /// just need to know: users who use the same callID can talk with each other.
   final String callID;

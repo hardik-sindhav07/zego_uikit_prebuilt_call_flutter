@@ -47,6 +47,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
     required this.userName,
     required this.config,
     required this.isCalling,
+    required this.callWidget,
     this.events,
     this.onDispose,
     this.plugins,
@@ -64,6 +65,8 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
   final String userID;
 
   final bool isCalling;
+  final Widget callWidget;
+
   /// The name of the currently logged-in user.
   /// It can be any valid string.
   /// Typically, you would use the name from your own user system, such as Firebase.
@@ -74,7 +77,6 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
   /// It can be any valid string.
   /// Users who provide the same callID will be logged into the same room for the call.
   final String callID;
-
   /// Initialize the configuration for the call.
   final ZegoUIKitPrebuiltCallConfig config;
 
@@ -168,7 +170,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       onDispose: widget.onDispose,
       isPrebuiltFromMinimizing: isPrebuiltFromMinimizing,
       durationStartTime: durationStartTime,
-      isCalling: widget.isCalling
+      isCalling: widget.isCalling, callWidget: widget.callWidget
     );
 
     if (isPrebuiltFromMinimizing) {
@@ -296,13 +298,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           splitScreenMode: true,
           builder: (context, child) {
             return widget.isCalling == true
-                ? Center(
-                    child: IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: Icon(Icons.call)),
-                  )
+                ? widget.callWidget
                 : ZegoInputBoardWrapper(
                     child: LayoutBuilder(
                       builder: (context, constraints) {

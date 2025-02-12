@@ -16,6 +16,8 @@ Widget normalCallPage() {
     userID: 'local user id',
     userName: 'local user name',
     callID: 'call id',
-    config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall(), isCalling: true,
+    config: ZegoUIKitPrebuiltCallConfig.oneOnOneVideoCall(),
+    isCalling: true,
+    callWidget: SizedBox(),
   );
 }

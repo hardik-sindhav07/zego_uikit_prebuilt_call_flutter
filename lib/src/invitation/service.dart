@@ -191,6 +191,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     required String userID,
     required String userName,
     required bool isCalling,
+    required Widget callWidget,
     required List<IZegoUIKitPlugin> plugins,
 
     /// call abouts.
@@ -237,6 +238,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       userID: userID,
       userName: userName,
       plugins: plugins,
+      callWidget: callWidget,
       requireConfig: requireConfig,
       ringtoneConfig: ringtoneConfig,
       config: config,

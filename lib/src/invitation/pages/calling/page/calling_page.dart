@@ -205,6 +205,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
     }
 
     final prebuiltCall = ZegoUIKitPrebuiltCall(
+      callWidget: widget.callInvitationData.callWidget,
       appID: widget.callInvitationData.appID,
       appSign: widget.callInvitationData.appSign,
       callID: widget.pageManager.invitationData.callID,
