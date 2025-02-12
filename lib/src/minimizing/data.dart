@@ -16,12 +16,13 @@ import 'package:zego_uikit_prebuilt_call/src/events.dart';
 
 /// @nodoc
 class ZegoCallMinimizeData {
-  const ZegoCallMinimizeData({
+  const ZegoCallMinimizeData( {
     required this.appID,
     required this.appSign,
     required this.callID,
     required this.userID,
     required this.userName,
+    required this.isCalling,
     required this.config,
     required this.events,
     required this.isPrebuiltFromMinimizing,
@@ -44,7 +45,7 @@ class ZegoCallMinimizeData {
   /// local user info
   final String userID;
   final String userName;
-
+  final bool isCalling;
   final ZegoUIKitPrebuiltCallConfig config;
   final ZegoUIKitPrebuiltCallEvents events;
 

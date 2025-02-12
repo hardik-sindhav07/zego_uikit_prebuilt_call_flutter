@@ -216,6 +216,7 @@ class _ZegoCallingPageState extends State<ZegoCallingPage> {
         widget.pageManager.onPrebuiltCallPageDispose();
       },
       plugins: widget.callInvitationData.plugins,
+      isCalling: widget.callInvitationData.isCalling,
     );
 
     return widget.callInvitationData.uiConfig.prebuiltWithSafeArea

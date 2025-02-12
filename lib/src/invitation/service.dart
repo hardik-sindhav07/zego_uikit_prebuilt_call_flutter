@@ -190,6 +190,7 @@ class ZegoUIKitPrebuiltCallInvitationService
     required String appSign,
     required String userID,
     required String userName,
+    required bool isCalling,
     required List<IZegoUIKitPlugin> plugins,
 
     /// call abouts.
@@ -243,7 +244,7 @@ class ZegoUIKitPrebuiltCallInvitationService
       notificationConfig: notificationConfig,
       innerText: innerText,
       events: events,
-      invitationEvents: invitationEvents,
+      invitationEvents: invitationEvents, isCalling: isCalling,
     );
     _invitation._private.init(
       innerText: innerText,

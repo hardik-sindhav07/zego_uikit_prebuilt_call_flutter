@@ -24,6 +24,7 @@ class ZegoUIKitPrebuiltCallInvitationData {
     required this.userName,
     required this.plugins,
     required this.requireConfig,
+    required this.isCalling,
     this.events,
     this.invitationEvents,
     this.contextQuery,
@@ -45,6 +46,7 @@ class ZegoUIKitPrebuiltCallInvitationData {
   /// for Android/iOS
   /// you need to fill in the appSign you obtained from console.zegocloud.com
   final String appSign;
+  final bool isCalling;
 
   /// local user info
   final String userID;

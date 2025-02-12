@@ -35,6 +35,7 @@ class ZegoCallInvitationServicePrivateImpl
     required String appSign,
     required String userID,
     required String userName,
+    required bool isCalling,
     required List<IZegoUIKitPlugin> plugins,
     ZegoCallPrebuiltConfigQuery? requireConfig,
     ZegoCallInvitationConfig? config,
@@ -83,6 +84,7 @@ class ZegoCallInvitationServicePrivateImpl
       config: config,
       uiConfig: uiConfig,
       notificationConfig: notificationConfig,
+      isCalling: isCalling
     );
 
     if (null != _contextQuery) {

@@ -46,6 +46,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
     required this.userID,
     required this.userName,
     required this.config,
+    required this.isCalling,
     this.events,
     this.onDispose,
     this.plugins,
@@ -62,6 +63,7 @@ class ZegoUIKitPrebuiltCall extends StatefulWidget {
   /// Typically, you would use the ID from your own user system, such as Firebase.
   final String userID;
 
+  final bool isCalling;
   /// The name of the currently logged-in user.
   /// It can be any valid string.
   /// Typically, you would use the name from your own user system, such as Firebase.
@@ -166,6 +168,7 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
       onDispose: widget.onDispose,
       isPrebuiltFromMinimizing: isPrebuiltFromMinimizing,
       durationStartTime: durationStartTime,
+      isCalling: widget.isCalling
     );
 
     if (isPrebuiltFromMinimizing) {
@@ -292,34 +295,42 @@ class _ZegoUIKitPrebuiltCallState extends State<ZegoUIKitPrebuiltCall>
           minTextAdapt: true,
           splitScreenMode: true,
           builder: (context, child) {
-            return ZegoInputBoardWrapper(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return clickListener(
-                    child: Stack(
-                      children: [
-                        background(constraints.maxWidth),
-                        audioVideoContainer(
-                          context,
-                          constraints.maxWidth,
-                          constraints.maxHeight,
-                        ),
-                        durationTimeBoard(),
-                        if (widget.config.topMenuBar.isVisible)
-                          topMenuBar()
-                        else
-                          Container(),
-                        if (widget.config.bottomMenuBar.isVisible)
-                          bottomMenuBar()
-                        else
-                          Container(),
-                        foreground(context, constraints.maxHeight),
-                      ],
+            return widget.isCalling == true
+                ? Center(
+                    child: IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(Icons.call)),
+                  )
+                : ZegoInputBoardWrapper(
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return clickListener(
+                          child: Stack(
+                            children: [
+                              background(constraints.maxWidth),
+                              audioVideoContainer(
+                                context,
+                                constraints.maxWidth,
+                                constraints.maxHeight,
+                              ),
+                              durationTimeBoard(),
+                              if (widget.config.topMenuBar.isVisible)
+                                topMenuBar()
+                              else
+                                Container(),
+                              if (widget.config.bottomMenuBar.isVisible)
+                                bottomMenuBar()
+                              else
+                                Container(),
+                              foreground(context, constraints.maxHeight),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   );
-                },
-              ),
-            );
           },
         ),
       ),
