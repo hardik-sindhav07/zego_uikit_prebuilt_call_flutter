@@ -18,10 +18,10 @@
 @import file_picker;
 #endif
 
-#if __has_include(<flutter_callkit_incoming_yoer/FlutterCallkitIncomingPlugin.h>)
-#import <flutter_callkit_incoming_yoer/FlutterCallkitIncomingPlugin.h>
+#if __has_include(<flutter_callkit_incoming/FlutterCallkitIncomingPlugin.h>)
+#import <flutter_callkit_incoming/FlutterCallkitIncomingPlugin.h>
 #else
-@import flutter_callkit_incoming_yoer;
+@import flutter_callkit_incoming;
 #endif
 
 #if __has_include(<flutter_logs/FlutterLogsPlugin.h>)
