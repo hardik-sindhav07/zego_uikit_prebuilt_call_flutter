@@ -33,7 +33,7 @@ dependencies:
   uuid: ^4.1.0
   permission_handler: ^11.0.1
   shared_preferences: ^2.2.2
-  is_lock_screen2: ^2.0.1
+  is_lock_screen2: ^2.0.2
   plugin_platform_interface: ^2.1.6
 
   #  1. make kotlin version >= 1.8.0, open the your_project/android/app/build.gradle file, and modify the kotlin_version to 1.8.0.
