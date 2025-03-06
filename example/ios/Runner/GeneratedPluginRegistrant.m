@@ -36,12 +36,6 @@
 @import flutter_vibrate;
 #endif
 
-#if __has_include(<is_lock_screen2/IsLockScreenPlugin.h>)
-#import <is_lock_screen2/IsLockScreenPlugin.h>
-#else
-@import is_lock_screen2;
-#endif
-
 #if __has_include(<native_device_orientation/NativeDeviceOrientationPlugin.h>)
 #import <native_device_orientation/NativeDeviceOrientationPlugin.h>
 #else
@@ -134,7 +128,6 @@
   [FlutterCallkitIncomingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterCallkitIncomingPlugin"]];
   [FlutterLogsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLogsPlugin"]];
   [VibratePlugin registerWithRegistrar:[registry registrarForPlugin:@"VibratePlugin"]];
-  [IsLockScreenPlugin registerWithRegistrar:[registry registrarForPlugin:@"IsLockScreenPlugin"]];
   [NativeDeviceOrientationPlugin registerWithRegistrar:[registry registrarForPlugin:@"NativeDeviceOrientationPlugin"]];
   [FPPPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPPackageInfoPlusPlugin"]];
   [PathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"PathProviderPlugin"]];

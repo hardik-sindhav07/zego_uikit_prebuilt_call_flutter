@@ -46,11 +46,6 @@ public final class GeneratedPluginRegistrant {
       Log.e(TAG, "Error registering plugin flutter_vibrate, flutter.plugins.vibrate.VibratePlugin", e);
     }
     try {
-      flutterEngine.getPlugins().add(new com.wingli.is_lock_screen2.IsLockScreenPlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin is_lock_screen2, com.wingli.is_lock_screen2.IsLockScreenPlugin", e);
-    }
-    try {
       flutterEngine.getPlugins().add(new com.github.rmtmckenzie.native_device_orientation.NativeDeviceOrientationPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin native_device_orientation, com.github.rmtmckenzie.native_device_orientation.NativeDeviceOrientationPlugin", e);

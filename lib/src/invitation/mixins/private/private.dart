@@ -460,15 +460,15 @@ class ZegoCallInvitationServicePrivateImpl
       return;
     }
 
-    final isScreenLockEnabled = await isLockScreen() ?? false;
+    // final isScreenLockEnabled = await isLockScreen() ?? false;
     var isAppInBackground = appLifecycleState != AppLifecycleState.resumed;
-    if (isScreenLockEnabled) {
-      isAppInBackground = true;
-    }
+    // if (isScreenLockEnabled) {
+    //   isAppInBackground = true;
+    // }
     ZegoLoggerService.logInfo(
       'AppLifecycleStateChanged, state:$appLifecycleState, '
       'isAppInBackground:$isAppInBackground, '
-      'isScreenLockEnabled:$isScreenLockEnabled',
+      'isScreenLockEnabled: false',
       tag: 'call',
       subTag: 'call invitation service private(${identityHashCode(this)})',
     );
